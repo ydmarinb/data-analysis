@@ -1,0 +1,63 @@
+---
+title: "Naive Bayes"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+
+# Intuición 
+
+
+El clasificador de naive Bayes es un método de clasificación bastante utilizado cuando se tienen conjuntos de datos pequeños .
+
+El método se encuentra basado en el teorema de bayes que se encuentra enunciado a continuación.
+
+
+$$P(A|x)=\frac{P(x|A)P(A)}{P(x)}$$
+
+* $P(A|x)$  $x$ es una entrada nueva de datos y se quiere mirar la probabilidad que esta pertenezca a la clase $A$
+
+* $P(x|A)$ Probabilidad de que nuestros la categoría $A$ tenga entradas de datos.
+
+* $P(A)$ Es la probabilidad completa en la clase A.
+
+* $P(x)$ Evidencia.
+
+
+Consiste en analizar a cual clase pertenece un individuo basado en la probabilidad total de que este pertenezca a cada una de las categorías posibles, de forma  que la probabilidad de pertenencia es encontrada teniendo en cuenta las probabilidades de que cada una de las características del individuo debe cumplir para estar en aquella categoría  se cumplan de forma individual. 
+ 
+**Nota: ** Las variables usadas como predictoras deben ser categorías.
+
+# Implementación en R
+
+```{r}
+library(kableExtra)
+base <- read.csv("../Bases de datos/electronics-purchase.csv")
+kable(head(base),"markdown")
+```
+
+
+```{r}
+library(naivebayes)
+mod <- naive_bayes(Purchase~., base)
+mod
+```
+
+
+En los resultados anteriores se puede observar cómo cada variable predictora influye en la decisión (si o no).
+
+# Referencia
+
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/8969628?start=753

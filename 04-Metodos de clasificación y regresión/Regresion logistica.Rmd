@@ -1,0 +1,53 @@
+---
+title: "Regresión logística."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+# Intuición 
+
+La regresión logística es usada en los casos donde queremos clasificar observaciones en alguna de dos categorías.
+
+![](logistica.png)
+
+El clasificador funciona tomando aquellas observación para las cuales la transformación logística dada por
+
+$$logit(p_i)= \log\left(\frac{p_i}{1-p_i}\right)=\beta_0+\beta_1x_{1,i}+...+\beta_{k,i}$$
+
+
+
+sean mayor a 0.5 y menor a 0.5, por lo que todo elemento mayor a a este valor pertenece a una categoría y si es menor pertenece a la otra categoría.
+
+
+# Implementación en R
+
+```{r}
+library(kableExtra)
+base <- read.csv("../Bases de datos/boston-housing-logistic.csv")
+
+kable(head(base), "markdown")
+base$CLASS <- as.factor(base$CLASS)
+
+```
+
+```{r}
+modelo <- glm(CLASS~., base, family = binomial)
+summary(modelo)
+```
+
+# Referencias 
+
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/8973266?start=0
+* https://es.wikipedia.org/wiki/Regresi%C3%B3n_log%C3%ADstica

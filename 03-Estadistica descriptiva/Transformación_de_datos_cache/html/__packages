@@ -1,0 +1,5 @@
+base
+tidyr
+kableExtra
+dplyr
+bindrcpp

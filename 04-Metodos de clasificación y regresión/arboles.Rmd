@@ -1,0 +1,219 @@
+---
+title: "Árboles de clasificación y regresión."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+# Árboles de regresión
+
+
+
+Los árboles de regresión son un método de analitica de datos y se usan cuando queremos predecir el valor de una variable numerica.
+
+
+
+1. Primero se divide el espacio cada  predictor $X_1,X_2,...X_p$ en $J$ regiones distintas y no superpuestas entre ellas $R_1,R_2,...,R_J$.
+
+2. Para las observaciones que caigan en la misma región $R_j$ tomaremos el mismo valor de respuesta que por simplicidad es el promedio de todas las observaciones que caigan en  esta región.
+
+La construcción de las regiones se hace seleccionando cajas(rectángulos) tales que minimicen el RSS.
+
+$$RSS = \sum _{j=1}^J \sum_{i \in R_j}(y_i-\hat{y}_{R_j})^2$$
+
+
+* $\hat{y}_{R_j}$ es la respuesta media para las observaciones que caen en la $j-ésima$ caja.
+
+
+
+El proceso para la construcción de la regiones anteriores puede ser bastante costoso computacionalmente por lo que para la construcción del árbol utilizamos una técnica llamado división binaria recursiva. Se llama de este modo porque comienza en la parte superior del árbol con una sola variable y luego se va partiendo hacia abajo formando nuevas divisiones a partir de otras variables.
+
+El método consiste en lo siguiente:
+
+Seleccionamos el predictor $X_j$ y un punto de corte $s$ con el cual partimos el espacio del predictor  entre las regiones $\{ X|X_j< s\}$ y $\{ X|X_j\geq s\}$ de forma que se tenga el RSS más bajo.
+
+Con el método anterior se forman solo dos posibles regiones para cada predictor $X_j$ seleccionado.
+
+
+
+$$R_1(j,s)=\{ X|X_j< s\} \ \ \ y \ \ \ R_2(j,s)=\{ X|X_j\geq s\}$$ 
+Y ademas se busca el valor de $j$ y $s$ que minimizan la ecuación
+
+$$  \sum_{i:x_i \in R_1(j,s)}(y_i-\hat{y}_{R_1})^2 \ + \ \sum_{i:x_i \in R_2(j,s)}(y_i-\hat{y}_{R_2})^2$$
+
+## Poda de los árboles
+
+El proceso anterior es bastante bueno a la hora de explicar las variaciones en un conjunto de entrenamiento pero puede fallar a la hora de realizar nuevas predicciones porque en ocasiones se llegan a formar tantas divisiones que el modelo de sobre ajusta a los datos. Pero este problema puede ser solucionado construyendo un sub-árbol el cual puede minimizar la varianza y simplificar la interpretación admitiendo un pequeño sesgo.
+
+Para encontrar el sub-árbol apropiado  consideramos una secuencia de árboles indexados por un parámetro de ajuste no negativo $\alpha$.
+
+En otras palabras sea  $T_0$ el árbol completo, debemos encontrar un sub-árbol $T\subset T _0$ el cual permita minimizar la siguiente fórmula.
+
+
+$$RSS = \sum _{m=1}^{|T|} \sum_{i:x_i \in R_m}(y_i-\hat{y}_{R_m})^2+\alpha |T|$$
+
+* $|T|$ corresponde al número de nodos terminales del sub-árbol.
+* $R_m$ es el rectangulo corresponde  al $m-esimo$ nodos terminal.
+
+
+El parámetro de ajuste $\alpha$ controla una compensación entre los componentes del sub-árbol y su ajuste a los datos de entrenamiento. Cuando $\alpha = 0$, entonces el subárbol $T$
+simplemente será igual a $T_0$, 
+Sin embargo, a medida que aumenta $\alpha$, hay un precio que pagar por tener un árbol con
+muchos nodos terminales, por lo que la cantidad  tenderá a minimizarse
+para un subárbol más pequeño. Podemos seleccionar un valor de
+$\alpha$ utilizando un conjunto de validación o utilizando validación cruzada. Luego volvemos a la
+conjunto completo de datos y obtenemos el sub-árbol correspondiente a $\alpha$.
+
+## Implemenatción en R
+
+```{r}
+library(tree)
+library(kableExtra)
+
+base <- read.delim("https://raw.githubusercontent.com/ydmarinb/Poster/master/Base.txt")
+kable(head(base),"markdown")
+```
+
+```{r}
+modelo <- tree(CEC~.,base )
+summary(modelo)
+```
+
+
+
+```{r}
+plot(modelo)
+text ( modelo , pretty =3, cex = 0.8)
+```
+
+***
+
+**Poda del arbol**
+
+```{r}
+modelo1 <- cv.tree(modelo)
+modelo1
+```
+
+En la información anterior encontramos el número de nodos y la desviación del error de validación cruzada para cada número específico de nodos.
+
+```{r}
+
+plot(modelo1$size , modelo1$dev, type ="b",xlim=c(0,8),ylim = c(0,39000))
+
+```
+
+En el gráfico anterior se observa la varianza del error para la validación cruzada, se busca que esta sea lo más baja posible. El criterio para seleccionar el número de nodos óptimo es el tomar el nodo anterior a el cual en el que se observe un aumento en la varianza.
+
+***
+
+**A continuación se presenta el metodo para realizar un validación cruzada loocv sobre el modelo anterior**
+
+
+```{r message=FALSE}
+library(DMwR)
+user.rpart <- function(form, train, test) {
+    require(tree)
+    model <- tree(formula = form,data =  train)
+    preds <- predict(model, test)
+  
+}
+
+## Now the evaluation
+eval.res <- loocv(learner('user.rpart'),
+                  dataset(CEC~.,base),
+                  loocvSettings(1234),verbose = T)
+summary(eval.res)
+
+```
+
+
+# Árboles de clasificación
+
+Este método es bastante similar al de los árboles de regresión. Su diferencia radica en que su variable de respuesta es una categoría.
+
+La forma de crear las particiones es bastante similar a la de árboles de regresión usando tambien división binaria recursiva. En este caso no nos intentara minimizar en RSS si no la tasa de error de clasificación, este error esta dado por:
+
+$$E=1- max_k(\hat{p}_{mk})$$
+
+* ${p}_{mk}$ representa la proporción observaciones de entrenamiento en el $m-ésima$ región que son de la clase $k$.
+
+Sin embargo la tasa de error data anteriormente no es lo suficientemente sensitivo, por lo que se utilizan las siguientes medidas.
+
+* **El indice de Gini** definido por:
+
+$$G=\sum _{k=1}^k \hat{p}_{mk}(1-\hat{p}_{mk}),$$
+
+La anterior es una medida de la varianza cruzada de las k clases o llamada también medida de la impureza del modelo. Un valor pequeño indica  que  un nodo  contiene predominantemente observaciones de la misma clase.
+
+* **Entropia** definida por:
+
+$$D = - \sum_{k=1}^k \hat{p}_{mk} \ log \  \hat{p}_{mk}$$
+
+Desde $0\leq \hat{p}_{mk}\leq1$ por lo que $0 \leq -\hat{p}_{mk} \ log \  \hat{p}_{mk}$
+
+
+## Implementación en R
+
+```{r}
+base <- read.csv("../Bases de datos/banknote-authentication.csv")
+base$class <- as.factor(base$class)
+kable(head(base), "markdown")
+arbol <- tree(class ~ ., base)
+summary(arbol) 
+```
+
+La varianza reportada esta dada por la expresión 
+
+$$-2\sum_m\sum_kn_{mk} \ log \ \hat{p}_{mk}$$
+
+
+```{r}
+plot ( arbol )
+text ( arbol , cex = 0.5)
+```
+
+
+```{r}
+set.seed (3)
+arbol.cv <- cv.tree(arbol, FUN = prune.misclass)
+arbol.cv
+```
+
+```{r}
+par(mfrow = c(1 ,2))
+plot( arbol.cv$size , arbol.cv$dev , type ="b")
+plot( arbol.cv$k , arbol.cv$dev , type ="b")
+```
+
+```{r}
+arbol.corte <- prune.misclass(arbol , 10)
+plot(arbol.corte)
+text(arbol.corte, cex = 0.7)
+```
+
+
+
+# Desventajas
+ 
+* Desafortunadamente, los árboles generalmente no tienen el mismo nivel de predicción que las demás técnicas de predicción.
+
+* Los árboles pueden ser muy poco robustos. En otras palabras, una pequeño cambio en los datos puede causar un gran cambio en la estimación final.
+árbol.
+
+
+# Referencias
+
+* An introduction to statistical learning with R.
+

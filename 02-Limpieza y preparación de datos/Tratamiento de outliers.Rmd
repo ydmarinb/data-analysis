@@ -1,0 +1,204 @@
+---
+title: "Tratamiento de outliers "
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+
+output: 
+   html_document:
+    highlight: tango
+    theme: cosmo
+    toc : yes
+    toc_float : true
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+
+```
+# Datos atípicos
+
+
+“Una observación que se desvía mucho
+de otras observaciones y despierta sospechas de ser generada por un mecanismo
+diferente”
+
+
+
+
+
+#Datos atípicos univariados
+
+```{r}
+ozone.data<-read.csv("../bases de datos/ozone.csv",
+                       stringsAsFactors = F)
+names(ozone.data)
+```
+
+```{r}
+boxplot(ozone.data$pressure_height, 
+        main = "Pressure Height",
+        boxwex = 0.5,col="blue")
+#out
+```
+
+##Remplazar los valores atípicos
+
+```{r}
+impute_outliers <- function(x, removeNA = TRUE){
+  quantiles <- quantile(x, c(0.05, 0.95), na.rm = removeNA)
+  x[x<quantiles[1]] <- mean(x, na.rm = removeNA)
+  x[x>quantiles[2]] <- median(x, na.rm = removeNA)
+  x
+}
+imputed_data <- impute_outliers(ozone.data$pressure_height)
+
+```
+
+
+
+```{r}
+
+par(mfrow = c(1,2))
+
+boxplot(ozone.data$pressure_height, main = "Presión con outliers",
+        col = 3)
+boxplot(imputed_data, main = "Presión sin outliers",col=2)
+```
+
+
+
+```{r}
+replace_outliers <- function(x, removeNA = TRUE){
+  qrts <- quantile(x, probs = c(0.25, 0.75), na.rm = removeNA)
+  caps <- quantile(x, probs = c(.05, .95), na.rm = removeNA)
+  iqr <- qrts[2]-qrts[1]
+  h <- 1.5 * iqr
+  x[x<qrts[1]-h] <- caps[1]
+  x[x>qrts[2]+h] <- caps[2]
+  x
+}
+
+capped_pressure_height <- replace_outliers(ozone.data$pressure_height)
+
+```
+
+
+
+```{r}
+par(mfrow = c(1,2))
+boxplot(ozone.data$pressure_height, main = "Presión con outliers"
+        ,col=5)
+boxplot(capped_pressure_height, main = "Presión sin outliers",col=6)
+```
+
+#Datos atípicos multivariados
+
+
+
+
+```{r}
+with(cars, plot(x=speed, y=dist))
+
+```
+
+---
+
+```{r}
+#Punto de balanceo
+n <- dim(cars)[1]
+mycars <- rbind(cars, c(60, 218.3649))
+with(mycars, plot(x=speed, y=dist))
+points(mycars[n + 1, ], pch=20, col='blue')
+mod1 <- lm(dist ~ speed, data=cars);abline(mod1)
+```
+
+#Identificación
+Con los elementos de la diagonal de la matriz H
+ 
+$$H=X(X^TX)^ {-1}X^T$$
+Si $h_{ii}>\frac{2p}{n}$ La observación $i$ se considera un **punto de balanceo**.
+
+```{r}
+mod2 <- lm(dist ~ speed, data=mycars)
+lm.influence(mod2)$hat
+```
+
+---
+
+```{r}
+plot(lm.influence(mod2)$hat)
+
+```
+
+#Punto de de influencia
+
+```{r}
+
+mycars1 <- rbind(cars, c(25, 10))
+with(mycars1, plot(x=speed, y=dist,ylim = c(0,200),xlim = c(0,50),
+                   points(25,10,col=2,pch=20)))
+mod3 <- lm(dist ~ speed, data=mycars1);abline(mod1);abline(mod3,col=4)
+
+```
+
+#Identificación
+
+
+Una **distancia de Cook** grande significa que una observación tiene un peso grande en la estimación de $\beta$ .
+
+$$D_j=\frac{\sum_{j=1}^n (\hat{y}_j-\hat{y}_{j(i)})}{p \hat{\sigma}^2}$$
+Cuando $D_j=\frac{4}{n-p-2}$ se considera que la observación es un punto de influencia.
+
+```{r message=FALSE}
+require(olsrr)           # graficos
+require(MPV)             # cook
+```
+
+
+
+```{r}
+
+
+softdrink <- MPV::softdrink
+
+colnames(softdrink) <- c('tiempo', 'cantidad', 'distancia')
+
+
+
+```
+
+
+```{r}
+mod <- lm(tiempo ~ cantidad + distancia, data=softdrink)
+cutoff <- 4/(25-3-2)
+plot(mod, which=4, cook.levels=cutoff)
+abline(h=cutoff, col='lightpink', lty='dashed')
+```
+
+
+
+#DFFITS
+
+Se puede investigar la influencia de eliminar la i-ésima observación sobre el valor predicho o ajustado.
+
+$$DFFITS=\frac{\hat{y}_i-\hat{y}_{i(i)}}{S_i\sqrt(p/n)}$$
+
+Se sugiere que merece investigarse toda observación con $|DFFITS|>2\sqrt(p/n)$
+
+
+
+```{r}
+
+
+olsrr::ols_plot_dffits(mod)
+```
+
+# Referencias
+
+* Diapositivas del profesor Freddy Hernandez
+
+
+

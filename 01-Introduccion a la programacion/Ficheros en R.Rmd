@@ -1,0 +1,202 @@
+---
+title: "Ficheros en R"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output:
+  html_document:
+    highlight: tango
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+
+```
+
+# CSV
+
+Los archivos CSV (del inglés comma-separated values) son un tipo de documento en formato abierto sencillo para representar datos en forma de tabla, en las que las columnas se separan por comas, en R utilizamos los siguientes códigos para
+trabajar con esta clase de fichero.
+
+
+
+
+```{r eval=FALSE}
+
+read.csv() óread.csv2() si el archivo es separado con ;
+```
+
+* sep="," <- Me permite indicar la separación entre columnas (, . \t)
+* dec="," <- Me permite indicar el separador decimal
+* col.names <- c("name1","name2",...) <- Me permite asignar nombres a las columnas
+* header <- por de.fecto TRUE, para indicar si la base de datos tiene cabecera
+* na.strings="NA" <- Como están denotados los NA en las base de datos
+* stringAsFactor=F <- Por defecto T me permite ordenar a R que no convierta los string en factores
+
+
+## Ejemplo
+
+```{r}
+
+library(kableExtra)
+
+auto <- read.csv("../Bases de datos/auto-mpg.csv", 
+                 header = TRUE, sep = ",",
+                 stringsAsFactors = FALSE)
+
+kable(head(auto),format = "markdown")
+```
+
+# XML
+
+XML es un subconjunto de lenguajes de marcado estándar, simplificado y adaptado a Internet. Un lenguaje de marcado, es una forma de codificar un documento que junto con el texto incorpora etiquetas o marcas que contienen información adicional acerca de la estructura del texto o su presentación,en R utilizamos los siguientes códigos para trabajar con esta clase de fichero.
+
+```{r eval=FALSE}
+#Instalamos el paquete necesario
+install.packages("XML")
+
+#Cargamos la base de datos en un string llamado url
+url <- "file.xml"
+
+#Localizamos el archivo
+XML <- xmlParse(url)#XMLInternalDocument
+
+#Se obtiene todo lo que hay en el nodo raız del archivo XML
+raiz <- xmlRoot(XML)
+
+#Se crea un data frame con lo valores obtenidos
+datos <- xmlSApply(raiz,function(x)xmlSApply(x,xmlValue))
+
+#Creamos un nuevo data frame pero con los datos transpuestos
+datos <- data.frame(t(datos),row.names = NULL)
+```
+
+* xmlSAapply <- Devuelve una matriz de lo valores sobre cada uno de los valores de nodo raíz.
+* xmlValue <- Permite extraer la información de un nodo raı́z.
+* t <- Me permite transponer una matriz o un data frame
+* row.name = NULL <- Indico a R que las filas no tendrán nombres.
+
+
+## Ejemplo
+
+```{r}
+library(XML)
+
+url <- "../Bases de datos/cd_catalog.xml"
+
+xmldoc <- xmlParse(url) 
+rootnode <- xmlRoot(xmldoc)
+rootnode[2]
+
+cds_data <- xmlSApply(rootnode, function(x) xmlSApply(x, xmlValue) )
+
+kable(head(cds_data),"markdown")
+cds.catalog <- data.frame(t(cds_data), row.names = NULL)
+
+kable(cds.catalog[1:5,],format = "markdown")
+
+```
+
+**Nota:** En ocasiones puede ser complicado extraer información de ficheros XML por lo que se recomienda el estudio de la sintaxis  de [Xpath](https://www.w3schools.com/xml/xpath_intro.asp).
+
+# HTML
+
+Un chero HTML es un formato especializado de un chero XML, en R utilizamos los siguientes códigos para trabajar con esta clase de fichero.
+
+```{r eval=FALSE}
+#Cargamos el paquete necesario
+library(XML)
+
+#Cargamos el link de la pagina web en un string llamado url
+url <- "www.pagina.com"
+
+#Cargamos todas la tablas de la pagina web
+tablas <- readHTMLTable(url)
+
+```
+
+Las  tablas serán tomadas en R como lista compuesta por todas las tablas que hay almacenadas en la página web, por lo que debemos indicarle a R cuál de esas tablas es la que nos interesa.
+
+```{r eval=FALSE}
+library(XML)
+
+#Indicamos a R cual es la tabla que nos interesa
+
+tablas[[6]] #En este caso indicamos a R que queremos la tabla 6
+tabla <- readHTMLTable(url,which = 6)
+
+```
+
+* which = # <- Nos permite indicar cual tabla queremos
+
+## Ejemplo
+
+```{r}
+population_url <- "../Bases de datos/WorldPopulation-wiki.htm"
+tables <- readHTMLTable(population_url)
+
+most_populated <- tables[[6]]
+head(most_populated, 3)
+
+custom_table <- readHTMLTable(population_url, which = 6)
+custom_table
+```
+
+#JSON
+
+JSON acrónimo de JavaScript Object Notation, es un formato de texto ligero para el intercambio de datos, hoy en dı́a se considera la alternativa a XML. En R utilizamos los siguientes códigos para trabajar con esta clase de fichero.
+
+```{r eval=FALSE}
+#Instalamos el paquete necesario
+install.packages("jsonlite")
+
+#Cargamos el paquete necesario
+library(jsonlite)
+
+#la base de datos ó la dirección de la pagina web en un string llamado url
+url <- "file.json" 
+
+#Leemos la base de datos
+base <- fromJSON(url)
+
+#Como en html podemos almacenar un conjunto de data frame en un archivo json por lo que para acceder a el usamos
+el siguiente código
+base <- base$list$resources$resource$tabla
+
+#Por ultimo, si queremos convertir un data frame en un archivo json podemos hacer lo siguiente
+toJSON(data.frame)
+
+```
+
+## Ejemplo
+
+```{r}
+library(jsonlite)
+
+
+dat.1 <- fromJSON("../Bases de datos/students.json")
+
+
+# Libreria para leer url y extrar las tablas
+library(curl)
+
+url <- "http://www.floatrates.com/daily/usd.json"
+currencies <- fromJSON(url)
+
+currency.data <- currencies$eur
+head(dat.1, 3)
+dat.1$Email
+
+
+
+
+
+```
+
+# Referencias
+
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/8945178?start=270

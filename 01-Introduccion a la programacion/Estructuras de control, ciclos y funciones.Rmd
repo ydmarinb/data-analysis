@@ -1,0 +1,100 @@
+---
+title: "Estructuras de control, ciclos y funciones."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output:
+  html_document:
+    highlight: tango
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+
+```
+
+# Estructuras de control
+
+Con el fin de buscar un mejor integración con el usuario R ofrece las estructuras de control `if, else, ifelse`
+
+La construcción de las anteriores se presenta a continuación.
+
+
+```{r eval=FALSE}
+if (condicion){
+  
+  Instruccion_1
+  Instruccion_2
+  Instruccion_3
+}
+
+else {
+  Instruccion_1
+  Instruccion_2
+}
+```
+
+La siguiente instrucción es usada cuando se quieren aplicar estructuras de control para procesos sencillos y cortos.
+
+```{r eval=FALSE}
+ifelse(Condición, Operación si cumple, Operación No cumple)
+```
+
+# Ciclos
+
+R nos proporciona la posibilidad de crear los siguientes tipos de ciclos. `for, while, repeat`
+
+A continuación se presenta la estructura para la creación de cada uno de estos.
+
+
+```{r eval=FALSE}
+for (i in secuencia) {
+  operación_1
+  operación_2
+  operación_3
+  
+}
+```
+
+```{r eval=FALSE}
+while (condición) {
+  operación_1
+  operación_2
+  operación_3
+}
+```
+
+```{r eval=FALSE}
+repeat {
+  operación_1
+  operación_2
+  
+  if(condición) break()
+  
+}
+```
+
+# Funciones
+
+En R es posible crear funciones de la siguiente manera.
+
+```{r eval=FALSE}
+nombre_función <- function(parametro1, parametro2, .....){
+  procedimiento_1
+  procedimiento_2
+  procedimiento_3
+  
+  return(resultado)
+  
+}
+```
+
+# Referencias
+
+* Manual de R, Freddy H. Barajas

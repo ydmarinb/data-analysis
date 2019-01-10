@@ -1,0 +1,196 @@
+---
+title: "Máquinas de soporte vectorial."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+
+
+
+# Introducción
+
+El método de máquina de soporte vectorial está basado en un método llamado **máxima margen de clasificación** el cual consiste en separar un conjunto de datos en dos o más categorías por medio de hiperplanos, teóricamente lo que se quiere hacer es lo siguiente.
+
+Supongamos que se quiere partir un conjunto de datos en dos categorías . De esta forma consideremos el hiperplano de separación $\beta_0+\beta_1x_{i1}+\beta_2x_{i2}$ , el método consiste en encontrar la máxima margen de separación entre el hiperplano y las dos categorías.
+
+ Optimizar $\beta_0,\beta_1,...,\beta_p,M$ tal que $M(margen)$ sea la maxima y debe estar sujeto a que $\sum_{j=1}^p\beta_j^2 = 1$.
+
+En ocasiones no podemos separar las categorias con este metodo por lo que debemos recurrir a métodos más flexibles.
+
+# El método
+
+Al igual que el método de máxima margen de clasificación las máquinas de soporte vectorial consisten en encontrar un hiperplano de separación a partir de el cual la distancia de este a cualquiera de las categorías sea máxima. Teóricamente el método funciona así
+
+Dado dos categorías $y=\pm 1$para cualquier $x$ que pertenezca al hiperplano separador se debe cumplir que
+
+$$x^{T}w+b=0$$
+Donde $w$ es el vector normal al hiperplano de separación,$x$ es la matriz de datos y $b$ es un constante que describe como el plano está desplazada con respecto al origen.Debemos recordar que si dos vectores $x^T$ y $w$ son ortogonales su producto punto es cero.
+$$x\in H, \ w \perp H, \ d(0,H)=\frac{b}{||w||}$$
+
+
+Ahora la región de separación puede ser representada de la siguiente manera
+
+$$\left\{ \begin{array}{lc}
+             x_i^Tw+b\geq a &   si  & y=1 \\
+             x_i^Tw+b \leq-a &  si  & y =-1
+             \end{array}\right.$$
+             
+
+Se debe cumplir que 
+
+$$y_i(x_i^T w+b)\geq a$$
+
+Por lo que el margen está dado por
+
+$$M=d_++d_-=\frac{2a}{||w||}$$
+
+
+Finalmente resumimos el problema en 
+
+
+$$\left\{ \begin{array}{lc}
+             maximizar &  M \\
+             sujeto a & y_i(x_i^Tw+b)\geq M
+             \end{array}\right.$$
+             
+             
+             
+O tambien 
+
+$$\left\{ \begin{array}{lc}
+             minimizar  &  f(w)=\frac{1}{2}||w||^2 \\
+             sujeto a & g(w,b)=-y_i(x_i^Tw+b)+1\leq0
+             \end{array}\right.$$
+             
+             
+             
+# Generalización
+
+En ocasione no es posible encontrar un hiperplano de separación que permite clasificar las clases de modo que cada punto caiga solo donde le corresponde, por lo que se debe permitir una porción de datos mal clasificados, teóricamente esto se explica así
+
+
+
+
+sea 
+$$\Psi=c(\psi_1,\psi_2,..,\psi_n)$$ un vector que representa la proporción de observaciones de una clase $i$ que caen en el lugar equivocado.
+
+
+El reto consiste en maximizar M de tal forma que
+
+$$\left\{ \begin{array}{lc}
+             y_i(x_i^Tw+b)\geq  M(1-\psi_i) & \forall_i=1,...,n\\
+             \forall_i=1,...,n \ \psi_i\geq 0, \ \ \sum_{i=1}^n\psi_i\leq C
+             \end{array}\right.$$
+             
+             
+             
+             
+             
+             
+             
+O tambien 
+
+$$\left\{ \begin{array}{lc}
+             minimizar  &  \frac{1}{2}||w||^2+C \sum_{i=1}^n \psi_i \\
+             sujeto \ a & y_i(x_i^Tw+b)\geq 1- \psi_i, \forall_i = 1,..,n
+             \end{array}\right.$$
+             
+             
+# El kernel
+
+Cuando no es apropiado un clasificador lineal, existe un opción para expandir las dimensiones del espacio vectorial ya que algunos separadores aunque en $R²$ pueden no se funciones, en una base vectorial (o kernel) de mayor dimensión puede llegar a ser transformado en una función.
+
+Algunos de los kernels más utilizados
+
+
+$$kernel: \ \ k(x,y)= \ <h(x),h(y)>$$
+
+$$\left\{ \begin{array}{lcc}
+             polinomial \ \  K(x,y)= (1+ <x,y>)^d\\
+             radial  \ \ K(x,y)= e^{-\gamma||x-y||^2} \\
+             red neuronal \ \ K(x,y) = tanh(k_1 <x,y>+k_2)
+             \end{array}\right.$$
+
+
+# Implementación en R
+
+**Ejemplo tomade del libro de introducción al apredizaje estadistico**
+
+## Kernel lineal
+
+```{r}
+library(e1071)
+
+set.seed (1)
+x = matrix ( rnorm (20*2) , ncol =2)
+y = c( rep ( -1 ,10) , rep (1 ,10) )
+x [ y ==1 ,]= x [ y ==1 ,] + 1
+plot(x , col =(3 - y ) )
+```
+
+
+Cuando queremos utilizar un kernel con separación lineal agregamos el parámetro `linear`
+
+```{r}
+dat = data.frame ( x =x , y = as.factor(y) )
+svmfit = svm ( y~. , data = dat , kernel ="linear", cost =10 ,scale = FALSE )
+plot (svmfit , dat)
+```
+
+El paquete cuenta con la función `tune()` la cual me permite comprobar por medio de la validación cruzada diferentes modelos ajustados con diversos parámetros para el costo y/o el gamma.
+
+```{r}
+set.seed (1)
+tune.out = tune ( svm , y~ . , data = dat , kernel ="linear" ,
+ranges = list ( cost = c (0.001 , 0.01 , 0.1 , 1 ,5 ,10 ,100) ) )
+summary (tune.out)
+```
+
+En este caso el menor error se obtuvo con con un costo iguala 0.1.
+
+## kernel radial
+
+```{r}
+set.seed (1)
+x = matrix ( rnorm (200*2) , ncol =2)
+x [1:100 ,]= x [1:100 ,]+2
+x [101:150 ,]= x [101:150 ,] -2
+y = c ( rep (1 ,150) , rep (2 ,50) )
+dat = data.frame ( x =x , y = as.factor ( y ) )
+```
+
+             
+```{r}
+plot (x , col = y )
+```
+
+```{r}
+train = sample (200 ,100)
+svmfit = svm ( y~ . , data = dat [ train ,] , kernel ="radial" ,cost =1)
+plot ( svmfit , dat [ train ,])
+```
+
+
+
+```{r}
+svmfit = svm ( y~ . , data = dat [ train ,] , kernel ="radial" , gamma =1 ,
+cost =1*10^5 )
+plot ( svmfit , dat [ train ,])
+```
+
+# Referencia
+
+* Libro de introducción al apredizaje estadistico.
+* https://www.udemy.com/machinelearningpython/

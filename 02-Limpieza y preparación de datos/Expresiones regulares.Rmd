@@ -1,0 +1,191 @@
+---
+title: "Expresiones regulares"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+
+output: 
+  html_document:
+    theme : cosmo
+    toc : yes
+    highlight: tango
+    toc_float : true
+
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+
+```
+
+# Que son las expresiones regulares
+Expresión regular, también conocida como regex, regexp o expresión racional, es una secuencia de caracteres que forma un patrón de búsqueda, principalmente utilizada para la búsqueda de patrones de cadenas de caracteres u operaciones de sustituciones.
+
+# Téoria
+
+Las expresiones regulares se construyen utilizando los operadores **unión, concatenación y clausura de Kleene**.
+
+
+**La clausura de Kleene : ** es una operación  que se aplica sobre un conjunto de cadenas de caracteres o un conjunto de símbolos o caracteres, y representa el conjunto de las cadenas que se pueden formar tomando cualquier número de cadenas del conjunto inicial, posiblemente con repeticiones, y concatenados entre sí.
+
+## Cuantificadores
+
+Un Cuantificador que precede a un carácter cuantifica las veces que este carácter puede aparecer.
+
+* `?`  El carácter que precede puede aparecer como mucho una vez.
+* `+`  El carácter que le precede debe aparecer al menos una vez.
+* `*`  El carácter que le precede puede aparecer cero, una, o más veces.
+* `{}` Las llaves juegan el papel de meta caracteres, para que cumplan su funcionalidad deben estar después de la expresión regular y encierran uno o varios números.
+      + `{n}` Indica que coincide n veces.
+      + `{n,}` Indica que coincide más n veces.
+      + `{,n}` Indica que coincide hasta n veces.
+      + `{n,m}` Indica que coincide más n veces y menos de m veces.
+
+
+## Alternación
+
+* `$` El signo de dolar representa el final de la cadena de caracteres o el final de la línea.
+
+* `^` El acento representa el inicio de la cadena.
+
+## Agrupación
+
+* `()` Los paréntesis son usados para la aplicación de operadores sobre más de un carácter.
+
+* `[]`  Los corchetes agrupan caracteres en grupos o clases. Son útiles cuando es necesario buscar uno de un grupo de caracteres.
+    + `[a-z]` Especifica un rango de caracteres.
+    + `[^.... ]` Lista de caracteres excluidos
+
+* `|` Una barra vertical separa las alternativas. Realiza el papel de **o**.
+
+* `.` El punto  busca cualquier carácter sin incluir los saltos de línea.
+
+
+## Barra invertida
+
+Se utiliza para escapar el siguiente carácter de la expresión de búsqueda de forma que este adquiera un significado especial o deje de tenerlo.
+
+
+
+
+
+* `\a` — Representa una "campana" o "beep" que se produce al imprimir este carácter.
+* `\e` — Representa la tecla "Esc" o "Escape"
+
+* `\x` — Se utiliza para representar caracteres ASCII o ANSI si conoce su código. De esta forma, si se busca el símbolo de derechos de autor y la fuente en la que se busca utiliza el conjunto de caracteres Latin-1 es posible encontrarlo utilizando "\xA9".
+* `\d` — Representa un dígito del 0 al 9.
+* `\w` — Representa cualquier carácter alfanumérico.
+* `\s` — Representa un espacio en blanco.
+* `\D` — Representa cualquier carácter que no sea un dígito del 0 al 9.
+* `\W` — Representa cualquier carácter no alfanumérico.
+* `\S` — Representa cualquier carácter que no sea un espacio en blanco.
+* `\A` — Representa el inicio de la cadena. No un carácter sino una posición.
+* `\Z` — Representa el final de la cadena. No un carácter sino una posición.
+* `\b` — Marca la posición de una palabra limitada por espacios en blanco, puntuación o el inicio/final de una cadena.
+* `\B` — Marca la posición entre dos caracteres alfanuméricos o dos no-alfanuméricos.
+
+
+
+## El signo de admiración
+
+* `!` El signo de admiración representa una búsqueda negativa, en otras palabras que no incluya la palabra que especificamos.
+
+## Metacaracteres especiales
+* `\t` — Representa un tabulador.
+* `\r` — Representa el "retorno de carro" o "regreso al inicio" o sea el lugar en que la línea vuelve a iniciar.
+* `\n` — Representa la "nueva línea" el carácter por medio del cual una línea de inicio.
+* `\f` — Representa un salto de página
+* `\v` — Representa un tabulador vertical
+
+
+
+# Implementación en R
+
+```{r}
+string <- c("R es el mejor lenguaje", " Es un lenguaje vectorizado",
+            " Es muy bueno en analítica")
+patron <- '(R|lenguaje)'
+
+```
+
+## Detección  del patron.
+
+
+
+```{r}
+# Da la posición de las fraces que contienen el patron
+grep(pattern = patron, string) 
+
+# Extrae las oraciones que contienen el patron
+grep(pattern = patron, string, value = T)
+
+# valores logicos
+grepl(pattern = patron, string)
+
+stringr::str_detect(pattern = patron, string)
+```
+
+## División de un strig usando un patron
+
+
+```{r}
+
+strsplit(string, patron)
+
+stringr::str_split(string, patron)
+```
+
+## Localización del patron 
+
+```{r}
+stringr::str_locate(string , patron)
+
+stringr::str_locate_all(string , patron)
+```
+
+## Extraer patron
+
+
+```{r}
+# Extraer solo las primeras coincidencias
+regmatches(string, regexpr(patron, string))
+
+#Extraer todas las conincidencias
+regmatches(string, gregexpr(patron, string))
+
+# Extraer solo las primeras coincidencias
+stringr::str_extract(string , patron)
+
+# Extraer solo las primeras coincidencias en una lista
+stringr::str_extract_all(string , patron)
+
+# Extraer solo las primeras coincidencias en una matriz
+stringr::str_extract_all(string , patron, simplify = T)
+
+
+```
+
+# Reemplazar patron
+
+```{r}
+# Reemplaza la primera coincidencia
+sub(patron, c("python"), string)
+
+# Reemplaza todas las coincidencias
+gsub(patron, c("python"), string)
+
+# Reemplaza la primera coincidencia
+stringr::str_replace(string, patron, "python")
+
+# Reemplaza todas las coincidencias
+stringr::str_replace_all(string, patron, "python")
+
+```
+
+# Referencias
+
+* https://es.wikipedia.org/wiki/Expresi%C3%B3n_regular
+* https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf
+

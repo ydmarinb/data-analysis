@@ -1,0 +1,214 @@
+---
+title: "Transformación de datos."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+
+#Data wrangling 
+
+En ocasiones nos encontramos con ficheros de datos desarreglado, lo que puede llegar a complicar el análisis de los datos.
+Por esto  es necesario transformar o mapear datos de una estructura inicial a un formato más conveniente para poder utilizar dichos datos. En R lo hacemos con ayuda de la librería `tidyr`.
+
+
+```{r}
+library(tidyr)
+library(kableExtra)
+
+base <- read.csv("../Bases de datos/paises.csv")
+kable(head(base),"markdown")
+```
+
+
+## Spread
+
+Permite dividir las columnas clave y valor en nuevas columnas.Por lo general se reducen la cantidad de filas y aumenta la cantidad de columnas.
+
+```{r}
+basetidy <- spread(base, key = key, value = value)
+kable(basetidy, "markdown")
+```
+
+## Gather
+
+Permite colapsar múltiples columnas en pares de clave valor. Por lo general se reducen la cantidad de columnas y aumenta la cantidad de filas.
+
+```{r}
+basemessy <- gather(basetidy, key = 'llave', value = 'Valor', 3:4)
+kable(basemessy,"markdown")
+```
+
+## Separate
+Separar una columna en multiples columnas, indicanco un caracter como delimitador.
+
+```{r}
+rate <- read.csv("../Bases de datos/rate.csv")
+kable(head(rate),"markdown")
+```
+
+```{r}
+ratediv <- separate(rate, col = "rate", into = c("tasa","poblacion"),sep = "/" )
+kable(ratediv,"markdown")
+```
+
+## Unite
+Une multiples columnas en una sola columna, indicanco un caracter como delimitador.
+
+```{r}
+kable(unite(ratediv, rate, c("tasa","poblacion"), sep ="/"),"markdown")
+```
+
+
+# Dplyr
+
+Permite manipulara la infromación como en SQL. Este paquete presenta las siguientes funciones:
+
+* **select** extraer variables existente.
+* **filter** extraer observaciones especificadas.
+* **mutate** permite crear nuevas variables.
+* **summarise** agregar o modificar el objeto de estudio.
+* **arrange** ordenar los datos.
+* **group_by** agrupaciones de datos.
+
+## Select
+
+
+
+```{r message=FALSE}
+library(dplyr)
+protein <- read.csv("../Bases de datos/protein.csv")
+kable(head(protein),"markdown")
+     
+```
+
+
+```{r}
+kable(head(select(protein, RedMeat,Eggs),3), "markdown")
+```
+
+```{r}
+kable(head(select(protein, 2:5),3),"markdown")
+```
+
+```{r}
+kable(head(select(protein, Country, starts_with('C')),3), "markdown")# Variables que empiezan con C
+```
+
+* **contains** El nombre de la variable coincide con cierto patrón
+* **matches** El nombre de la variable coincide con alguna expresión regular
+* **everything** Selecciona todas las variable. 
+
+
+
+```{r}
+auto <- read.csv("../Bases de datos/auto-mpg.csv")
+kable(head(auto),"markdown")
+```
+ 
+## Filter
+
+```{r}
+a1 <- filter(auto, auto$cylinders == 4)
+kable(head(a1),"markdown")
+```
+
+
+```{r}
+a2 <- filter(auto, auto$cylinders == 4 & auto$horsepower < 90)
+kable(head(a2),"markdown")
+```
+
+Se pueden utilizar además los siguientes operadores lógicos:
+
+* `y & !x`   y - x
+* `x | y`   y union x
+* `x & y`  y intersección x
+* `xor(x, y)`  (y unido x) - (y intersección x)
+
+
+## Mutate
+
+```{r}
+attach(auto)
+a3 <- auto%>%mutate(Relacion = mpg / cylinders) %>% filter(Relacion > 7) %>% arrange(desc(mpg))%>%select(-acceleration)
+kable(head(a3),"markdown")
+```
+
+```{r}
+estu <- read.csv("../Bases de datos/estudiantes.csv")
+kable(head(estu),"markdown")
+```
+
+
+**Ejemplo:** Estudiantes que reprobaron
+```{r}
+kable( estu %>% gather("materia","nota",2:6) %>% mutate(Estado = ifelse(nota > 7,"aprobo","reprobo"))%>%filter(Estado == "reprobo"), "markdown")
+```
+
+## groupby y summarise
+
+Con estas se permiten definir las funciones de agregación a aplicar:
+
+* min
+* max
+* n
+* mean
+* median
+* var
+* sd
+* first
+* last
+* nth : enesimo valor
+* n_distinct
+
+**Ejemplo:** Resumen de cada estudiante
+
+```{r}
+Resumen <- estu %>% gather('Materia','Nota',2:6) %>% group_by(Estudiante) %>% 
+  summarise(Promedio = mean(Nota),Minima = min(Nota),Maxima = max(Nota), Materia= n()) %>%   arrange(desc(Promedio))
+kable(head(Resumen),"markdown")
+  
+```
+
+# Uniendo conjuntos de datos
+Existen funciones para uniones entre base de datos las cuales son:
+bind_cols, bind_rows, left_join, inner_join, semi_join y anti_join.
+
+## bind_cols y bind_rows 
+
+```{r eval=FALSE}
+# Unir dos bases de datos por columnas
+bind_cols(colum1 , colum2)
+
+#Unir conjuntos de datos por filas
+bind_rows(row1, row2)
+```
+
+## inner_join
+
+```{r eval=FALSE}
+inner_join(base1, base2, by = c("variable1", " variable2", ...))
+```
+
+# Referencias
+
+* https://www.youtube.com/watch?v=1FnLEjS6L08&list=PLDe82FA1Tn-RrhRymRcr3uOvgLwXpYEAe&index=2&t=0s
+
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/8928690?start=0
+
+
+

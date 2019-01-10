@@ -1,0 +1,96 @@
+---
+title: "Bosques aleatorios, Bagging y  Boosting."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+# Bagging
+
+Los árboles de decisión tienen el problema de  gran varianza lo que puede afectar su poder de predicción. El método Bagging o agregación  Bootstrap está basado en la idea de que si tenemos un conjunto de n observaciones $y_1,y_2,...,y_n$ y cada una posee varianza $\sigma^2$, la varianza de la media $\bar{y}$ está dada por $\sigma^2/n$. De esta forma podemos minimizar la varianza y aumentar el poder de predicción separar el conjunto de entrenamiento en $B$ conjuntos de entrenamientos y con cada uno de estos subconjuntos construimos un árbol de regresión o clasificación para luego promediar el resultado de predicción en todos los arboles construidos.
+
+$$\hat{f}_{avg}(x)= \frac{1}{B}\sum_{b=1}^B \hat{f}^b(x)$$
+
+## Implementación en R
+
+```{r message=FALSE}
+library(randomForest)
+set.seed(2018)
+base <- read.csv("../Bases de datos/banknote-authentication.csv")
+base$class <- as.factor(base$class)
+
+bagging <- randomForest(class ~ ., data = base, mtry = 4, ntree = 500, importance =T)
+
+```
+
+* `mtry = ` Número de predictoras a usar en la contrucción del modelo.
+* `ntree = ` Número de árboles a usar.
+
+
+```{r}
+bagging
+```
+
+Los resultados nos muestran una matriz de confución y un error para cada clase.
+
+# Árboles aleatorios
+
+La técnica de  árboles aleatorios es bastantes similar a la de bagging diferenciándose en que para la construcción de sus árboles cada vez que se considera una división en un árbol, una muestra aleatoria de
+m predictores se elige como candidatos del conjunto completo de p predictores.
+La división puede usar solo uno de esos m predictores. Con frecuencia se toma $m = \sqrt p$
+
+
+## Implementación en R
+
+```{r}
+random <- randomForest(class ~ ., data = base, mtry = 2, ntree = 500, importance =T)
+random
+```
+
+La tasa de error OOB (Observaciones fuera de la bolsa) se refiere a el porcentaje de observaciones que no se usaron para construir los árboles.
+
+# Boosting
+
+Bosstind o maquinas de gradiente mejorado trabaja similar a Baging diferenciandoce en que los árboles son construidos secuencialmente. Cada árbol se construyen para aprender de los errores de mala clasificación de los anteriores árboles construidos.
+
+El algoritmo del proceso esta dado a continuación:
+
+1. Se establece $\hat{f}(x)= 0$ y $r_i=y_i$ para todo $i$ en el conjunto de entranamiento.
+2. Para $b=1,2,...,B$ repetir:
+    + Ajustar un arbol $\hat{f}^b$ con $d$ cortes (d+1 nodos terminales) a el conjunto de entrenamiento $(X,r)$
+    + Actualize $\hat{f}$ adiccionando n un parametro de versión de una nuevo arbol:
+    $$\hat{f}(x) \longleftarrow  \hat{f}(x)+\lambda\hat{f}^b(x)$$
+    + Actualizar los residuales 
+    $$r_i \longleftarrow r_i-\lambda\hat{f}^b(x_i)$$
+3. Salida del modelo
+
+$$\hat{f}(x)= \sum_{b=1}^B \lambda \hat{f}^b (x).$$
+    
+## Implementación en R
+
+```{r message=FALSE}
+library(gbm)
+
+
+bosting <- gbm(class ~., data = base, distribution = "bernoulli", n.trees = 50000, interaction.depth = 4, shrinkage = 0.2)
+
+
+```
+
+
+* `distribution = ` bernoulli para variables categóricas, gaussian para variables numéricas.
+* `shrinkage = ` Parámetro $\lambda$
+* `n.trees=` Número de árboles a usar
+* `interaction.depth = ` Número máximo de variables en cada árbol.
+

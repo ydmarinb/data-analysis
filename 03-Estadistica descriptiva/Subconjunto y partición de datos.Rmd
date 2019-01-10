@@ -1,0 +1,118 @@
+---
+title: "Subconjunto y partición de datos."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+# Partición de datos
+
+A veces es inteligente convertir variables numéricas a categóricas ya que si necesitamos aplicar métodos de análisis,
+simplificar variables esto puede ser conveniente. Para categorizar variables en R hacemos el siguiente procedimiento.
+
+
+```{r}
+library(kableExtra)
+base <- read.csv("../Bases de datos/data-conversion.csv")
+kable(head(base), "markdown")
+```
+```{r}
+#Creamos un vector de intervalos
+Intervalos <- c(-Inf, 3000, 10000, Inf)
+
+#Etiquetas de los intervalos
+Etiquetas <- c("Bajo", "Medio", "Alto")
+
+#Se crean las particiones
+base$Income.c <- cut(base$Income, breaks = Intervalos, labels = Etiquetas)
+kable(head(base), "markdown")
+```
+Podemos prescindir de las etiquetas de los intervalos o el los puntos de corte de los intervalos.
+
+```{r}
+#Sin etiquetas
+base$Income.c <- cut(base$Income, breaks = Intervalos)
+kable(head(base), "markdown")
+
+#Sin intervalos
+base$Income.c <- cut(base$Income,breaks = 3, labels = Etiquetas)
+kable(head(base), "markdown")
+
+```
+# Subconjunto de datos
+
+```{r}
+base1 <- read.csv("../Bases de datos/auto-mpg.csv")
+kable(head(base1), "markdown")
+```
+## Basados en índices y nombres
+
+Los indices representan la posición de el dato o los datos que queremos extraer, los indices estan datos desde el número 1.
+
+```{r}
+# Fila de la 1 a la 5 y columnas 1 a la 3
+kable(base1[1:5, 1:3], "markdown")
+
+# Fila de la 1 a la 5 y columnas 1,3,5
+kable(base1[1:5, c(1,3,5)], "markdown")
+
+# Fila de la 1 a la 5 y columnas 1,3,5
+kable(base1[1:5, c("displacement", "weight")], "markdown")
+
+
+
+```
+**Nota:** Si se agrega nada antes de la coma indica que se tomas todas las filas y si no se agrega nada despues se seleccionan todas las columnas.
+
+## Basado en condiciones
+
+```{r}
+kable(base1[base1$weight == max(base1$weight) |
+        base1$weight == min(base1$weight),], "markdown" )
+```
+
+Asi mismo de pueden hacer filtro usando los simbolos:
+
+* `!` -> representa la negación
+* `&` -> representa si
+* `|` -> representa o
+
+## La función subset()
+
+Con la función `subset()`podemos realizar los procedimientos anteriores.
+
+```{r}
+kable(subset(base1, base1$cylinders == 3,
+             select = "car_name"), "markdown")
+```
+# Anexo: Eliminar registro duplicados
+
+```{r eval=FALSE}
+#Se eliminan los registros duplicados de la base de datos.
+unique(base) 
+
+#Arroja un vector lógico, donde TRUE indica que la observación se encuentra duplicada
+duplicated(base) 
+
+#Se obtienen solo los registros duplicados en la base de datos.
+family[duplicated(base),]
+```
+
+# Referencias
+
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/9156410?start=0
+
+

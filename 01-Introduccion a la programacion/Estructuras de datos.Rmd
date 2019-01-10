@@ -1,0 +1,163 @@
+---
+title: "Estructura de datos en R"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output:
+  html_document:
+    highlight: tango
+    theme: cosmo
+    toc : true
+    toc_float: true
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+
+```
+
+# Vectores
+
+Los vectores son arreglos ordenados en los cuales se puede almacenar información numérico(Cuantitativa), alfanumérico(Cualitativa), booleano(True, false), o combinaciones de los anteriores. En R pueden ser creados de por medio de la instrucción `c()`que significa concatenar o por medio de las funciones `rep(), seq() y : `que permiten la creación de patrones.
+
+Presentamos a continuación ejemplos de creación de vectores.
+
+
+```{r}
+vector <- c(1, 5, 84, 9, 0)
+vector
+
+vector_1 <- c("a", "b", "c")
+vector_1
+
+vector_2 <- c(T, F, F, T)
+vector_2
+
+vector_3 <- c(2, 3, "c")
+vector_3
+
+vector_4 <- 1:5
+vector_4
+
+# seq(inicio, fin, salto)
+vector_5 <- seq(1,5,0.4)
+vector_5
+
+vector_6 <- rep(2,6)
+vector_6
+```
+
+## Estracción de elementos de un vector
+
+ Podemos acceder a los elementos de un vector por medio de índices y el signo `[]`.
+ 
+```{r}
+vector_1[2]
+
+vector_4[5]
+```
+ 
+
+## Eliminar elementos de un vector
+
+Podemos eliminar elementos de un vector por medio de índices y el signo menos.
+
+```{r}
+vector_4
+
+vector_4[-5]
+```
+
+# Matrices y arrays
+
+Las matrices son arreglos rectangulares de filas y columnas con información numérica, alfanumérica o lógica que se encuentra indexada. Para la construcción de una matriz en R se usa la función `matrix()`. Por otro lado los arrays tienen la misma estructura solo que pueden contener varias dimensiones, estos se construyen por medio de la función `array()`.
+
+Los métodos asociados a la función matriz y a la función array se muestran a continuación
+
+
+```{r eval=FALSE}
+matrix(data  , nrow   , ncol , byrow )
+array(data, dim )
+```
+
+* data: Datos que forman la matriz.
+* nrow: Número de filas.
+* ncol: Número de columnas.
+* byrow: Rellenar la información por filas.
+* dim: Dimensiones del array
+
+Algunos ejemplos de matrices y array son:
+
+```{r}
+matriz <- matrix(c(1,2,36,9,5,2),ncol = 3, byrow = T)
+matriz
+
+arreglo <- array(c(rep(1,5),rep(3,5),2,6), c(2,3,2))
+arreglo
+```
+
+## Extraer elementos de una matriz y un array
+
+Podemos acceder a los elementos de una matriz o un array por medio de índices y el signo `[]`.
+
+```{r}
+matriz[2,1]
+
+arreglo[2,1,1]
+```
+
+# Data frame
+
+Los data frame son estructuras de datos que permiten agrupar vectores  diferentes tipos  de datos (numérica, categórica, booleana) en un mismo objeto, pero que debe cumplir la condición de que todos los vectores deben tener la misma longitud. En R los data frame son generados por medio de la función `data.frame()`.
+
+Algunos ejemplos de data frame en R.
+
+```{r}
+vec_1 <- 1:5
+vec_2 <- c("a", "e", "i", "o", "u")
+marco.datos <- data.frame(Numeros = vec_1, Letras = vec_2)
+marco.datos
+```
+
+## Extraer elementos de una data frame
+
+Podemos acceder a los elementos de un data frame por medio de índices y el signo `[]`. Por lo general se especifican tanto la fila como la columna a la cual pertenece el data a extraer eso se hace por medio de la sintaxis `data.frame[#fila,#Columna]`
+
+Algunos ejemplos
+
+
+```{r}
+marco.datos[,1] # Se extrae solo la columna 1
+marco.datos[2,2]# Se extrae elemento de la fila 2 columna 2 
+```
+
+
+# Listas
+
+Las listas son estructuras muy usadas para almacenar objetos donde cada uno cada uno puede tener un estructura distinta. En R las listas se pueden crear por medio de la función  `list()`
+
+A continuación se presentan ejemplos sobre listas en R.
+
+```{r}
+vec_1 <- 1:5
+vec_2 <- c("a", "e", "i", "o", "u")
+marco.datos <- data.frame(Numeros = vec_1, Letras = vec_2)
+
+matriz <- matrix(c(1,2,36,9,5,2),ncol = 3, byrow = T)
+
+arreglo <- array(c(rep(1,5),rep(3,5),2,6), c(2,3,2))
+
+
+lista <- list(marco.datos, matriz, arreglo)
+
+```
+
+# Referencias
+
+* http://ocw.uc3m.es/estadistica/aprendizaje-del-software-estadistico-r-un-entorno-para-simulacion-y-computacion-estadistica/estructuras-de-datos-en-r
+
+* Manual de R, Freddy H. Barajas
+
+
+

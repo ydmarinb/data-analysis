@@ -1,0 +1,68 @@
+---
+title: "K Nearest Neighbors"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+# Intuición 
+
+Supongamos que queremos clasificar a un individuo en alguna de  dos posibles categorías, lo primero que se debe hacer es elegir un valor $k$ correspondiente al número de elementos a tomar como muestra que se encuentran  ya clasificados en alguna de las dos categorías. Ahora el algoritmo consiste el contar el número de elementos de cada categoría que aparecieron dado el $k$ mencionado anteriormente, el individuo que se quiere clasificar será tomado como miembro del grupo en el cual su conteo de elementos sea mayor.
+
+# Implementación en R
+
+```{r message=FALSE, warning=FALSE}
+library(kableExtra)
+library(class)
+library(caret)
+
+
+base <- read.csv("../Bases de datos/vacation-trip-classification.csv")
+kable(head(base),"markdown")
+```
+
+Cuando observamos la Income(ingreso) podemos darnos cuenta de aparición tanto de valores muy grande como valores muy pequeños lo que puede causar que el modelo no sea construido de la mejor manera por lo que debemos recurrir a escalar esta variable.
+
+```{r}
+base$Income_scale <- scale(base$Income)
+```
+
+Para la construcción de este modelo en R se debe ingresar tanto el conjunto de validación como el de prueba a tener en cuenta a la hora de construir y probar el modelo.
+
+```{r}
+set.seed(1)
+
+t <- createDataPartition(base$Income_scale,p = 0.8, list = F)
+train <- base[t,]
+test <- base[-t,]
+
+```
+
+
+```{r}
+modelo <- knn(train[,c(2,4)],test[,c(2,4)],train[,3], k = 3)
+```
+
+Realizamos la matriz de confución.
+
+```{r}
+table(modelo, test$Result, dnn = c("Predicho","Actual"))
+```
+
+
+# Referencias
+
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/8969818?start=15
+
+

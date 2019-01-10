@@ -1,0 +1,161 @@
+---
+title: "Funciones especializadas en R"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output:
+  html_document:
+    highlight: tango
+
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = T)
+
+```
+
+
+# Vectorización
+
+
+
+```{r}
+base <- read.csv("../Bases de datos/auto-mpg.csv", stringsAsFactors = F)
+```
+
+
+### Combinamos vectores
+
+Se combinan dos vectores por medio de `paste` como se hubiera hecho un ciclo.
+
+```{r}
+first <- c("inicio 1 ", "inicio 2 ", "inicio 3 ", "inicio 4 ")
+second <- c("primero", "segundo", "tercero", "cuarto")
+paste(first, second)
+```
+
+La función paste permite combinar vectores de diferentes tamaños.
+
+```{r}
+single <- c("prueba1", "prueba2")
+paste(first, single)
+```
+
+### Operaciones elementales sobre vectores
+
+No es necesario definir ciclos para aplicar operaciones elementales a las columna de un data frame.
+
+```{r}
+head(base[,1:5])
+base$displacement <- base$displacement *4
+```
+```{r}
+head(base[,1:5])
+```
+
+
+# apply
+
+```{r}
+m <- matrix(seq(1,16), 4, 4)
+m
+```
+
+Podemos realizar operaciones sobre filas o columnas donde 1 indica filas y 2 indica columnas.
+
+```{r}
+#Maximo por columna
+apply(m, 2, max)
+
+# Minimo por filas
+apply(m, 1, min)
+```
+
+También podemos definir funciones dentro de la función `apply` y aplicar estas funciones tanto por filas como por columnas (`c(1,2)`)
+
+```{r}
+# Cuadrado de x
+apply(m, c(1,2), function(x){x^2})
+```
+
+Si queremos aplicar funciones que dependen de ciertos parámetros lo hacemos de la siguiente manera.
+
+```{r}
+# Apicanco la funcion quantile
+
+apply(m, 1, quantile,probs = c(0.4,0.6,0.8))
+```
+
+# lapply
+
+Permite trabajar con vectores listas o data frame, permite aplicar operaciones por elementos y devuelve un lista.
+
+```{r}
+x <- 1:3
+lapply(x, sqrt)
+```
+```{r}
+x <- list(a = 1:10, b = c(1,10,100,1000), c = seq(5,50,5))
+x
+```
+
+```{r}
+lapply(x, mean)
+```
+
+# Sapply
+
+Permite trabajar con vectores listas o data frame, permite aplicar operaciones por elementos y devuelve un vector.
+
+```{r}
+sapply(x, mean)
+```
+
+`sapply` permite devolver matrices cuando la función aplicada no devuelve un valor único.
+
+```{r}
+sapply(base[,2:8], summary)
+```
+
+```{r}
+apply(base[,2:8], 2,sum)
+```
+
+# tapply
+
+Permite aplicar funciones a subconjuntos de datos de un data frame, vector,...
+
+```{r}
+base$cylinders <- factor(base$cylinders,
+                         levels = c(3,4,5,6,8),
+                         labels = c("3C", "4C", "5C", "6C", "8C"))
+```
+
+
+```{r}
+#Funcion con respecto a cada nivel del número de cylindros
+
+tapply(base$mpg, base$cylinders, mean)
+tapply(base$mpg, list(cyl = base$cylinders), mean)
+```
+
+# by
+
+Permite aplicar funciones definidas por el usuario a cualquier subconjunto de la base de datos.
+
+
+
+```{r}
+by(base, base$cylinders, function(row){cor(row$mpg, row$acceleration)})
+```
+
+# Referencias
+
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/8945178?start=270

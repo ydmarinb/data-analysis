@@ -1,0 +1,357 @@
+---
+title: "Gráficos descriptivos."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+# Gráficos del paquete  basicos
+
+```{r}
+base <- read.csv("../Bases de datos/auto-mpg.csv")
+
+attach(base)
+# recodificación de los niveles de la variable cilindros
+base$cylinders <- factor(base$cylinders, 
+                         levels = c(3,4,5,6,8),
+                         labels = c("3cil", "4cil", "5cil", "6cil", "8cil"))
+base$horsepower <- as.factor(base$horsepower)
+
+```
+
+## Histograma y gráfico de densidad
+
+Este tipo de gráficos es muy útil para representar variables numéricas ya que  me permite observar la distribución de la variable de interés  además de otras medidas descriptivas como la curtosis o la asimetría.
+
+```{r}
+hist(base$weight, col = "green", xlab = "Peso", las = 1, 
+     main = "Histograma del peso",breaks = 30, ylim = c(0,35))
+```
+
+* `col :` Color
+* `main :`Titulo
+* `xlab :` Etiqueta eje x 
+* `ylab :` Etiqueta eje y 
+* `breaks :`Número de columnas a mostrar
+* `las :` Dirección de las númeraciones del eje y
+* `ylim` o `xlim : ` Permiten definir el inicio y el fin del eje respectivo.
+
+
+```{r}
+plot(density(base$weight), main = "Gráfico de densidad del peso", col = 2)
+```
+
+
+<br>
+Ahora cuando queremos agregar encima de nuestro histograma la curva de densidad lo debemos hacer de la siguiente manera.
+
+```{r}
+hist(base$weight, col = "green", xlab = "Peso", las = 1, 
+     main = "Histograma del peso",breaks = 30, probability = T, ylab = "")
+lines(density(base$weight))
+```
+
+
+## Boxplot
+
+El boxplot es un gráfico muy útil a la hora de observar la distribución de una variable, me ofrece información sobre los valores máximos, los mínimos, los posibles valores atípico y  los cuartiles, además que el caso bivariado me permite analizar el comportamiento de una variable categórica en presencia de una numérica.
+
+
+```{r}
+boxplot(base$displacement, las = 1, col = "blue", 
+        main = "Boxplot de el desplazamiento")
+text(x=1.153,y = 70,"minimo",col="red")
+text(x=1.25,y = 107,"--- Q1",col="red")
+text(x=1.31,y = 147,"--- Q2(mediana)",col="red")
+text(x=1.25,y = 260,"--- Q3",col="red")
+text(x=1.153,y = 460,"maximo",col="red")
+```
+
+```{r}
+boxplot(base$mpg ~ base$cylinders, col = "yellow", las = 1, main = "Desplazamiento vs número de cilindros", boxwex = 0.5)
+```
+
+* ` boxwex :` Anchura de las cajas
+* `notch = T :` Franja de confianza para la mediana
+
+## Scatterplot
+
+El scatterplot es util para observar relación entre variables númericas.
+
+```{r}
+plot(base$acceleration ~ base$weight, main = "Peso vs aceleración", ylab = "Aceleración", xlab = "Peso", las = 1)
+```
+
+
+Si queremos agregar en nuestro gráfico anterior la línea de tendencia.
+
+
+```{r}
+plot(base$acceleration ~ base$weight, main = "Peso vs aceleración", ylab = "Aceleración", xlab = "Peso", las = 1)
+abline(lm(base$acceleration ~ base$weight))
+```
+
+```{r}
+pairs(~base$mpg+base$displacement+base$weight)
+```
+
+## Diagrama de barras
+
+Este tipo de gráfico es muy útil cuando queremos representar las frecuencias para variables numéricas y/o variables categóricas.Para representar variables categorías primero de debe crear una tabla de frecuencia sobre esta variables.
+
+
+```{r}
+barplot(table(base$cylinders), col = "red", main = "Frecuecia para cada tipo de cilindro", las = 1)
+
+```
+
+# Configuración de los gráficos
+
+Si queremos ver las cambios posibles que podemos hacer a la estructura de nuestros gráficos usamos.
+
+```{r}
+ help("par")
+```
+
+Si se quiere grabar múltiples gráficos en una solo ventana
+
+```{r}
+par(mfrow= c(1,2))
+hist(base$displacement)
+hist(base$weight)
+```
+
+# Lattice
+
+Este tipo de gráfico es útil para representar relaciones multivariantes entre las diferentes variables de un conjunto de datos.
+
+```{r}
+library(lattice)
+
+```
+
+## Boxplot
+
+```{r}
+bwplot(~base$mpg | base$cylinders, main = "MPG segun número de cilindros",
+       xlab = "Millas por galon")
+```
+
+## scatterplot
+
+```{r}
+xyplot(base$mpg~ base$displacement | base$cylinders)
+```
+
+
+```{r}
+splom(base[,c(1,2,4)])
+```
+
+```{r}
+attach(base)
+cloud(weight~horsepower*displacement|cylinders)
+```
+
+```{r}
+xyplot(base$mpg~base$displacement | base$cylinders,
+       auto.key=list(space='right'), type=c('p', 'r'),xlab = "Velocidad", ylab = "CEC")
+```
+
+
+## Histogramas y densidad
+
+
+```{r message=FALSE}
+attach(base)
+histogram(~displacement, col = 3)
+```
+
+
+
+
+
+## Gráfico de barras
+
+```{r}
+barchart(base$cylinders~ base$cylinders)
+```
+
+
+
+
+
+# ggplot
+
+```{r message=FALSE}
+library(ggplot2)
+```
+
+## scatter plot
+
+```{r}
+plot <- ggplot(base, aes(weight,mpg)) 
+plot + geom_point(alpha = 0.5, size = 5,aes(color = factor(cylinders))) + 
+  geom_smooth(method = "lm", se = F, col = "blue") +scale_fill_discrete(name = "Cilindro")
+  
+```
+
+* `ggplot :` Ventana del gráfico.
+
+* `aes() :` Estéticas, aquí van las variables a utilizar, los colores para la representación.
+
+* `geom_point :` Gráfico de puntos.
+
+* `alpha :` Intensidad de color en los puntos.
+
+* `size : ` Tamaño del punto.
+
+* `geom_smooth :` Recta de tendencia.
+
+* `se : ` intervalo de confianza.
+
+
+
+```{r}
+plot + geom_point(alpha = 0.5, size = 5,aes(color = factor(cylinders))) + 
+  geom_smooth(method = "lm", se = F, col = "blue")+ facet_grid(cylinders~.) + theme_bw(base_family = "Courier", base_size = 15)+ labs(x = "Peso") + labs(y = "Millas por galon")+ labs(title = "Consumo vs peso") 
+```
+
+* `facet_grid :` Dividir la cuadrícula en variables categóricas.
+* `theme_bw :` Modificar el tema del gráfico.
+* `base_family :` Tipo de letra.
+* `base_size :` Tamaño de la letra.
+* `labs : ` Nombres de ejes y título.
+
+
+## Gráfico de lineas
+
+```{r}
+plot <- ggplot(base, aes(base$displacement, base$weight))
+plot + geom_line(linetype = "dashed", aes(color = factor(cylinders)))
+```
+
+* `linetype :` Tipo de lineas.
+
+# Gráfico de barras
+
+```{r message=FALSE}
+library(dplyr)
+seg <- base %>%  group_by(cilindros = base$cylinders) %>% summarise(promedio = mean(mpg))
+
+
+plot <- ggplot(seg, aes(x = cilindros,y  = promedio, label = scales::comma(promedio)))
+
+plot + geom_bar(stat = "identity", show.legend = T) + 
+  scale_alpha_continuous(labels = scales::comma) + 
+  geom_text(size = 5 , position = position_stack(vjust = 0.5), col = 3) 
+```
+
+* `stat = "identity" :` Se le indica que no debe realizar el conteo si no que se le esta agregando la variable con el valor de y.
+
+* `label = scales::comma(variable) :` Variable refrente a la cual se agrgaran las etiquetas a las barras.
+
+* `scale_alpha_continuous :` Mostrar las etiquetas.
+
+* `geom_text :` Agregar texto en el gráfico.
+
+* `position_stack(vjust = 0.5) : ` posición del texto en el gráfico
+
+
+## Gráfico de distribución e histograma
+
+```{r}
+
+# histograma de frecuencias absolutas
+plot <- ggplot(base, aes(mpg))
+plot + geom_histogram(bins = 10, fill = "white", colour = "blue")
+
+
+```
+
+```{r message=FALSE}
+#Histograma con frecuencia relativas
+
+plot <- ggplot(base, aes(x = mpg, y = ..density..))
+plot + geom_histogram(bins = 10, fill = "cornsilk", colour = "blue") + geom_density() 
+
+```
+
+* `fill :` Relleno 
+
+
+
+
+
+
+# Otros gráficos
+
+## Beanplot(Gráfico de judias)
+
+```{r message=FALSE}
+library(beanplot)
+beanplot(base$mpg~ base$cylinders, col = c("red","green"))
+```
+
+## Gráfico de mosaico
+
+```{r}
+library(stats)
+base1 <- read.csv("../Bases de datos/mtcars.csv")
+mosaicplot(~ gear + carb, data = mtcars, 
+           color=2:7,  las = 1)
+
+```
+
+## Matrices de correlación
+
+```{r}
+library(corrplot)
+base$No <- NULL
+
+matriz <- cor(base[,-c(2,4,8)])
+corrplot(matriz, method = "shade",addCoef.col = T)
+
+```
+
+## Gráfico de pares
+
+```{r message=FALSE}
+library(GGally)
+ggpairs(base[,-c(4,6,7,8)],aes( colour = cylinders, alpha = 0.4))
+```
+
+# Exportar imagenes
+
+```{r eval=FALSE}
+pdf(file = "Grafico.pdf", width = 3000, height = 3000, re = 72) # Se abre el fichero
+ggpairs(base[,-c(4,6,7,8)],aes( colour = cylinders, alpha = 0.4))
+dev.off() # se cierra el fichero
+```
+
+* `re :` Resolución del gráfico.
+* `dev.off() :` se cierra el fichero
+* `Otros formatos de imagen : ` .ps,png,jpg
+
+
+**Nota:**  Las imágenes quedan guardadas en el directorio de trabajo.
+
+# Referencias
+
+* http://oscarperpinan.github.io/R/graficos.html#orgheadline50 (Paquete lattice) 
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/9010176?start=0
+
+

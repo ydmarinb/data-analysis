@@ -1,0 +1,143 @@
+---
+title: "Medidas de centralidad y sesgo."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+
+```{r message=FALSE}
+base <- read.csv("../Bases de datos/auto-mpg.csv")
+library(modeest) # Moda
+library(raster) #quantiles, coeficiente de variación
+library(moments)# asimetría, curtosis
+library(ggplot2)
+```
+
+# Medidas de tendencia central
+
+Estas medidas me permiten tener un idea sobre que tan centrados se encuentran los datos.
+
+## Media aritmética
+
+
+$$\bar{x}=\frac{\sum_{i=1} ^n x_i}{n}$$
+
+```{r}
+
+mean(base$weight)
+```
+
+## Mediana
+
+Es el valor bajo el cual se encuentra el 50% de los datos.
+
+$$P(X\leq m)=0.5$$
+```{r}
+median(base$weight)
+```
+
+## Moda
+
+Es el valor más frecuente en el conjunto de datos.
+
+$$p(X = M) \ \geq p(x = x_i) , \ \forall _i = 1,2,...,n$$
+```{r}
+mfv(base$mpg)
+```
+
+## Percentil
+
+Funciona similar a la media solo que con este valor se busca que la probabilidad o el corte pueda quedar en cualquier valor entre 0 y 1.
+
+$$P(X \leq x_p) = p, \ p \in[0,1]$$
+```{r}
+quantile(base$mpg)
+quantile(base$mpg, c(0.2,0.6))
+```
+
+# Medidas de dispesión
+
+Permiten evaluar cuánto queremos saber que tan desplazados están los valores con respecto a la media.
+
+
+## Varianza y desviación estandar
+
+
+
+$$s^2=\frac{\sum_{i=1}^n (x_i-\bar{x})^2}{n-1}$$
+La desviación estándar es usada con el propósito de llevar los resultados de la varianza a la escala original de los datos.
+
+$$s = \sqrt s^2$$
+```{r}
+var(base$displacement)
+sd(base$displacement)
+```
+
+## Coeficiente de variación
+
+$$CV = \frac{s}{\bar{x}}*100$$
+
+```{r}
+cv(base$displacement)
+```
+
+# Medidas de simetría y sesgo
+
+##  Asimetría de Fisher
+
+Me da una idea hacia donde están concentrados la mayoría de los datos.
+
+
+$$CA = \frac{\sum_{i=1}^n (x_i-\bar{x})^3}{n\ s^3}$$
+* Si la asimetría es **negativa** se tiene una distribución con una gran concentración de datos a la derecha de la media.
+
+* Si la asimetría es **cero** se tiene una distribución con una gra concentración de datos  en la media.
+
+* Si la asimetría es **positiva** se tiene una distribución con una gran concentración de datos a la izquierda de la media.
+
+
+
+
+```{r}
+skewness(base$mpg)
+```
+
+```{r}
+ggplot(base, aes(base$mpg)) + geom_density(fill = "blue") 
+
+```
+
+## Curtosis
+
+$$C = \frac{\sum_{i=1}^n (x_i-\bar{x})^4}{n\ s^4}-3$$
+* Si la curtosis es **negativa** se tiene una distribución con una gran dispersión de los datos , con grandes colas y algo aplastada.
+
+* Si la curtosis es **positiva** se tiene una distribución con una baja dispersión de los datos , con colas pequeñas alrededor de la media.
+
+* Si la curtosis es **cero** se tiene una distribución con una estructura similar a una normal.
+
+```{r}
+kurtosis(base$acceleration)
+```
+```{r}
+ggplot(base, aes(base$acceleration)) + geom_density(fill = "red") 
+```
+
+
+
+
+
+

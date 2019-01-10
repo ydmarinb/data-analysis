@@ -1,0 +1,125 @@
+---
+title: "Curva ROC, matriz de confusión y  Error cuadrático medio."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+
+<br>
+
+Los siguientes métodos me proporcione un a manera de comparar modelos o mirar su acertividad individual. Los dos primeros métodos son usados a la hora de clasificar y el último a la hora de regresar.
+
+# Matriz de confusión
+
+Con el propósito de medir la calidad del modelo, después de realizar la validación cruzada podemos construir una matriz que nos permite visualizar de forma sencilla que tan bien clasificó nuestro modelo.
+
+
+```{r}
+library(kableExtra)
+base <- read.csv("../Bases de datos/college-perf.csv")
+kable(head(base),"markdown")
+```
+```{r}
+tabla <- table(base$Perf, base$Pred, dnn = c("Actual", "predicho"))
+kable(tabla, "markdown")
+```
+
+**Nota:**La diagonal principal me muestra las casos donde se acertó  y los valores que estén fuera de esta muestra la información que está herrada.
+
+
+***
+
+
+Si queremos tener la información aterior representado como una proposión.
+
+```{r}
+kable(prop.table(tabla),"markdown")
+```
+```{r}
+barplot(tabla, col = c(4,5,6), legend = T, main = "Matriz de confusión de forma gráfica")
+```
+
+# Curva ROC
+
+La curva ROC representa la capacidad de un clasificador binario  para distinguir entre categorias. Con una curva ROC se busca la  viabilidad en nuestra clasificación, en otras palabras el modelo que ofrezca una mayor área bajo la curva presenta una mejor tasa de predicción. Además  me proporciona una forma de encontrar un punto de corte para una clasificación.
+
+
+```{r message=FALSE}
+library(ROCR)
+library(ggplot2)
+base1 <- read.csv("../Bases de datos/roc-example-1.csv")
+kable(head(base1),"markdown")
+```
+
+
+
+
+
+```{r}
+pred1 <- prediction(base1$prob, base1$class)
+perf1 <- performance(pred1, "tpr", "fpr")
+plot(perf1)
+lines(par()$usr[1:2], par()$usr[3:4])
+```
+
+El siguiente gráfico presenta de forma intuitiva la utilidad de la curva ROC y la importancia a la hora de encontrar un punto de corte de categorías óptimo.
+
+
+```{r}
+r1 <- base1[base1$class ==1,]
+r1 <- r1[1:46,]
+r2 <- base1[base1$class ==0,]
+ggplot(r1, aes(r1$prob))+geom_density(aes(fill ="red" ),alpha = 0.5) + geom_density(aes(r2$prob, fill ="purple" , alpha = 0.5), show.legend = F)+ labs(x = "Punto de corte") + scale_fill_discrete(name = "Categoria",labels = c("Enfermos","No enfermos","corte"))+ geom_vline(aes(xintercept = 0.5, color = "red"))+geom_vline(aes(xintercept = 0.8, color = "red"))+ geom_vline(aes(xintercept = 0, color = "red"))+ geom_vline(aes(xintercept = 1, color = "red")) + theme_bw(base_family = "Courier")
+
+```
+
+
+```{r}
+prob.corte <- data.frame(cut = perf1@alpha.values[[1]],
+                          fpr = perf1@x.values[[1]],
+                          tpr = perf1@y.values[[1]])
+```
+
+
+Observamos algunos puntos de corte y sus tasas de verdaderos positivos y falsos positivos.
+
+```{r}
+kable(head(prob.corte),"markdown")
+
+```
+
+
+***
+
+**Elegimos una tasa de verdaderos positivos mayor a 0.8**
+
+```{r}
+kable(head(prob.corte[prob.corte$tpr>=0.8,]),"markdown")
+```
+
+# Error cuadrático medio
+
+
+Este método es útil para comparar modelos de regresión. Se busca que este error sea lo más pequeño posible.
+
+La formula para este error esta dada por :
+
+$$ECM = \frac{1}{n}\sum_{i=1}^n(y_i-\hat{y}_i)^2$$
+
+
+```{r eval=FALSE}
+mean((y_real-y_predicho)^2)
+```
+

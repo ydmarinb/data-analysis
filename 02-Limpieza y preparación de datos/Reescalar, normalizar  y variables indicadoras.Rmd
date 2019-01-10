@@ -1,0 +1,95 @@
+---
+title: "Reescalar, normalizar  y variables indicadoras"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+
+output: 
+  html_document:
+    theme : cosmo
+    toc : yes
+    highlight: tango
+    toc_float : true
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+
+```
+
+# Variables indicadoras
+
+A Veces es necesario utilizar variables categóricas en métodos analı́ticos que solo permiten el ingreso de variables numéricas,por lo que a veces es necesario crear variables indicadoras. Con el paquete dummies podemos hacer estas conversiones.
+
+
+```{r message=FALSE}
+library(dummies)
+library(kableExtra)
+
+base <- read.csv("../bases de datos/data-conversion.csv")
+kable(head(base),format = "markdown")
+
+```
+```{r}
+base.dummy <- dummy.data.frame(base)
+kable(head(base.dummy),format = "markdown")
+```
+```{r}
+base.dummy <- dummy.data.frame(base, names = "Gender")
+kable(head(base.dummy),format = "markdown")
+```
+# Reescalar variables
+
+
+Para entender la necesidad de escalar variables analizaremos la siguiente base de datos
+
+```{r}
+
+kable(head(base)) %>% column_spec(5,background = "pink") %>% row_spec(c(2,5),background = "yellow") %>% kable_styling(full_width = T)
+
+```
+
+
+
+Se puede observar que aunque las cuadrículas pintadas en amarillo pertenecen a la misma variable (Income) la diferencia
+en valor numérico es bastante grande, lo que puede dificultar la implementación de técnicas de Machine Learning. En R
+cuando queremos escalar las variables hacemos los siguientes procedimientos.
+
+
+```{r}
+library(scales)
+
+#Ahora reescalamos un variable de la base de datos
+kable(rescale(base$Income))
+
+
+```
+
+Por defecto la función rescale me realiza un escalado de la variables en un rango [0,1] ya que aplica el siguiente método
+para escalar
+
+$$x.escalada = \frac{x-min(x)}{max(x)-min(x)}$$
+
+Si queremos modificar la escala modelos hacer lo siguiente
+
+```{r}
+kable(rescale(base$Income,to=c(1,10)))
+```
+
+# Normalización
+
+la normalización significa ajustar los valores medidos en diferentes escalas respecto a una escala común, a menudo previo
+a un proceso de realizar promedios. En R se pueden escalar las variables de una base de datos por medio de el siguiente
+procedimiento.
+
+
+```{r}
+base.escalada<- scale(base[,c(4,5)],center=T,scale=T)
+kable(head(base.escalada),format = "markdown")
+```
+# Referencias
+
+* https://www.udemy.com/r-data-science/learn/v4/t/lecture/8945178?start=270
+

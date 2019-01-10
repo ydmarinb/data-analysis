@@ -1,0 +1,110 @@
+---
+title: "Tipos de variables "
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+
+    
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+# Objetivo de la estadística descriptiva
+
+* Evaluar la calidad de los datos.
+* Determinar el comportamiento de las variables en el estudio
+* Comprobar supuestos: linealidad, normalidad,...
+* Resumir los datos.
+
+
+
+# Tipos de variables
+
+Es una característica que varía de un objeto o individuo a otro.En estadística, se distinguen tres tipos de variables **Continuas**, **Discretas** y **Categóricas**.
+
+* `Variables continuas` Son aquellas que provienen de procesos que in-
+volucran mediciones.
+
+* `Variables discretas` Son aquellas que provienen de procesos que in-
+volucran conteos.
+
+* `Variables categóricas` Son aquellas que provienen de procesos que
+involucran clasificaciones.
+      + `Nominal` Este nivel se utiliza cuando los valores en los que se mide la variable son códigos que representan la pertenencia a una categoría.
+      + `Ordinal` Se usa cuando los valores de una variable informan acerca
+de un orden o jerarquía.
+
+* `Variables tipo caracter` Por lo general se usan para representar nombres de individuos.
+
+# Implementación en R
+
+```{r}
+library(kableExtra)
+
+base <- read.csv("../Bases de datos/auto-mpg.csv",stringsAsFactors = F)
+# stringsAsFactors = F <- Impide que las variables caracter se conviertan en factor
+
+kable(head(base), "markdown")
+```
+
+
+Podemos observar que la variable No no ofrece información importante a la hora de realizar un análisis de la base de datos por lo que recurrimos a eliminarla.
+
+```{r}
+base$No <- NULL
+```
+
+
+
+```{r}
+# Conocer el tipo en que R ha tomado las variables
+str(base)
+```
+La función `str()` nos arroja información importante sobre la dimensión de la base de datos, los tipos de variables y algunas represenaciones de esta. Se debe resaltar que aunque R trata de ser lo mas inteligente posible se deben aplicar un poco de intuisión sobre a que tipo pertenece cada variable y si lo inferido no coincide con lo aportado por R se debe modificar.
+
+** Diccionario de representación**
+
+* `int` Variable discreta
+* `num` Variable continua
+* `Factor`Variable catrgorica
+* `chr`Variable tipo caracter
+
+
+
+
+***
+
+Aunque la variable `cylinders` es tomada como tipo discreto nuestra intuisión nos permite inferir que en reliadad esta representa una categoría, por lo que debemos recurrir a modificarla en R.
+
+```{r}
+base$cylinders <- as.factor(base$cylinders)
+# Funciona igual con los demas tipos de variables as.num(),as.int,...
+
+str(base)
+```
+En ocaciones resulta interesante recodificar algunas variables, lo cual puede hacerse  de la siguiente manera.
+
+```{r}
+base$cylinders <- factor(base$cylinders, levels = c("3", "4", "5", "6", "8"),labels = c("3Cylin", "4Cylin", "5Cylin", "6Cylin", "8Cylin"))
+
+kable(head(base), "markdown")
+```
+
+# Referencias
+
+* Kenneth Roy Cabrera Torres, Estadística descriptiva y exploratorio.
+* René Iral, Notas sobre el Curso Introducción al manejo de base de datos estadístico.
+
+

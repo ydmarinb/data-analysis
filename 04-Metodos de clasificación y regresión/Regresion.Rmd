@@ -1,0 +1,78 @@
+---
+title: "Regresión"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+# Intuición
+
+La regresión lineal como su nombre lo indica permite crear relaciones lineales entre una variable dependiente y un grupo de variables independientes.
+
+El reto consiste en minimizar
+
+$$e=\sum_{i=1}^n(y_i-\hat{y}_i)^2$$
+
+
+Donde $y_i$ es el valor de la observación para la $i-esima$  unidad, $\hat{y}_i$ es el valor estimado para la $i-esima$ observación.
+
+Se puede observar que la anterior función se encuentra representada por una función cuadrática con coeficiente siempre positivo por lo que para encontrar un mínimo recurrimos a derivar esta función.
+
+
+El modelo de regresión funciona sobre los siguientes supuestos
+
+$$y_i = \beta_0+ \beta_1X_i+ e_i$$ 
+
+donde $e_i\sim N(0, \sigma^2)$, $y\sim N(\mu,\sigma^2)$
+
+
+# Implementación en R
+
+## Construcción del modelo
+
+
+```{r}
+library(kableExtra)
+base <- read.csv("../Bases de datos/auto-mpg.csv")
+kable(head(base),"markdown")
+```
+
+Eliminamos las variables no útiles y se recodifican otras.
+
+
+```{r}
+base$cylinders <- as.factor(base$cylinders)
+base$car_name <- NULL
+```
+
+Se contruye el modelo.
+
+```{r}
+modelo <- lm(mpg ~ ., base)
+summary(modelo)
+```
+
+En la tabla anterior se presenta la significancia de las de individual de cada una de las variables, además se presentan el error estándar los grados de libertad el $R^2$ y el $R_{abj}^2$ ajustado para el modelo y la significancia del modelo.
+
+
+## Análisis de los residuales
+
+```{r}
+par(mfrow = c(2,2))
+plot(modelo)
+```
+
+
+
+ 

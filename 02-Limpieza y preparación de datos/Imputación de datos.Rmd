@@ -1,0 +1,223 @@
+---
+title: "Imputación de datos"
+author: "Yubar Daniel Marín Benjumea"
+date: "https://github.com/ydmarinb"
+output:
+  html_document:
+    highlight: tango
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+
+```
+
+## Patrones
+Los patrones de datos faltantes  representan relaciones matemáticas genéricas entre los datos observados y los ausentes.
+
+```{r}
+library(kableExtra)
+base <- read.csv("../bases de datos/housing-with-missing-value.csv")
+kable(base[1:4,1:7],"markdown")
+```
+
+
+```{r}
+
+#Contar el total de NAs en la base de datos
+sum(is.na(base))
+
+#Saber el número de NAs por columna
+colSums(is.na(base))
+
+#Omitir las filas con observaciones NA
+base1 <- na.omit(base)
+
+
+```
+
+
+
+# Clasificación de los datos perdidos
+
+* __MCAR (Missing Completely At Random):__ La probabilidad de que una respuesta a una variable sea dato faltante es independiente tanto del valor de esta variable como del valor de otras variables del conjunto de datos.
+
+* __MAR (Missing At Random):__ La probabilidad de que una respuesta sea dato faltante es independiente de los valores de la misma variable pero es dependiente de los valores de otras variables del conjunto de datos.
+
+* __NMAR (Not Missing At Random):__ La probabilidad de que una respuesta a una variable sea dato faltante es dependiente de los valores de la variable.
+
+
+```{r message=FALSE}
+#install.packages("VIM")
+library(VIM)
+aggr(base,numbers=T,sortVar=T)
+```
+
+# Imputación con la media
+
+```{r message=FALSE}
+#install.packages("mice", dependencies = TRUE)
+library(mice)
+
+columns <- c("ptratio", "rad")
+imputed_data <- mice(base[,names(base) %in% columns],m = 1,
+  maxit = 1, method = "mean",seed = 2018,print=F)
+complete.data <- mice::complete(imputed_data)
+
+
+xyplot(imputed_data,rad ~ptratio)
+
+
+```
+
+La imputación media subestimar la varianza, altera las relaciones entre las variables, segará casi cualquier estimación que no sea la media y sesgar la estimación de la media cuando los datos no sean MCAR.
+
+```{r}
+
+
+par(mfrow=c(1,2))
+plot(density(base$ptratio,na.rm = T),col=2,main="ptratio")
+lines(density(complete.data$ptratio),col=3)
+plot(density(base$rad,na.rm = T),col=2,main="rad")
+lines(density(complete.data$rad),col=3)
+```
+
+ 
+
+# Imputación mediante regresión
+
+```{r,message=FALSE}
+
+
+impute_arg1  <- mice(base[,names(base) %in% columns],m = 1,
+  maxit = 1, method = "norm.predict",seed = 2018,print=F)
+
+impute_arg <- mice::complete(impute_arg1)
+
+xyplot(impute_arg1,rad ~ptratio)
+```
+
+La imputación por regresión produce estimaciones no sesgadas de las medias bajo MCAR demás, las ponderaciones de regresión son imparciales en el MAR si los factores que influyen en la ausencia son parte del modelo de regresión.  Por otro lado, la imputación de regresión fortalece artificialmente las relaciones en los datos. Las correlaciones están sesgadas hacia arriba. La variabilidad está subestimada. Las imputaciones son demasiado buenas para ser verdad. La imputación de regresión es una receta para falsas relaciones positivas y espurias.
+
+
+
+```{r}
+par(mfrow=c(1,2))
+plot(density(base$ptratio,na.rm = T),col=2,main="ptratio")
+lines(density(impute_arg$ptratio),col=3)
+plot(density(base$rad,na.rm = T),col=2,main="rad")
+lines(density(impute_arg$rad),col=3)
+```
+
+# Imputación mediante regresión estocastica
+
+```{r}
+imputed_data1 <- mice(base[,names(base) %in% columns],m = 1,
+  maxit = 1, method = "norm.nob",seed = 2018,print=F)
+complete.data1 <- mice::complete(imputed_data1)
+xyplot(imputed_data1,rad ~ptratio)
+
+```
+
+Este método primero calcula la intercepción, la pendiente y la varianza residual en el modelo lineal, luego calcula el valor predicho para cada valor faltante y agrega un sorteo aleatorio del residual a la predicción. Una imputación de regresión estocástica bien ejecutada preserva no sólo los pesos de regresión, sino también la correlación entre variables.
+
+```{r}
+
+par(mfrow=c(1,2))
+plot(density(base$ptratio,na.rm = T),col=2,main="ptratio")
+lines(density(complete.data1$ptratio),col=3)
+plot(density(base$rad,na.rm = T),col=2,main="rad")
+lines(density(complete.data1$rad),col=3)
+```
+
+# Imputación LOCF 
+
+Son métodos de imputación ad hoc para datos longitudinales. La idea es tomar el valor observado anterior como un reemplazo de los datos faltantes. Cuando faltan varios valores en sucesión, el método busca el último valor observado.
+
+```{r eval=FALSE}
+library(tidyr)
+
+imputar <- tidyr::fill(data, variable)
+```
+
+
+LOCF es conveniente porque genera un conjunto de datos completo. Se puede aplicar con confianza en los casos en que estamos seguros de cuáles deberían ser los valores faltantes, por ejemplo, para las variables administrativas en datos longitudinales. Para los resultados, LOCF es dudoso. El método ha sido utilizado durante mucho tiempo en ensayos clínicos. La Administración de Drogas y Alimentos.
+
+
+
+# Imputación múltiple
+
+La imputación múltiple crea $m> 1$ conjuntos de datos completos. Cada uno de estos conjuntos de datos se analiza mediante un software de análisis estándar. Los $m$ resultados se agrupan en una estimación puntual final más un error estándar al agrupar basado en las reglas ("reglas de Rubin"). La Figura  ilustra los tres pasos principales en la imputación múltiple: imputación, análisis y agrupación.
+
+![](imagen.png)
+
+## Cómo funciona
+
+* El análisis comienza con datos observados, incompletos. La imputación múltiple crea varias versiones completas de los datos al reemplazar los valores faltantes por valores de datos plausibles. Estos valores plausibles se extraen de una distribución modelada específicamente para cada entrada faltante.
+
+* El segundo paso es estimar los parámetros de interés de cada conjunto de datos imputado.
+
+* El último paso es juntar la m .Las estimaciones de los parámetros en una estimación, y para estimar su varianza.La varianza combina la varianza de muestreo convencional (varianza dentro de la imputación) y la varianza adicional causada por la varianza extra de los datos faltantes causada por los datos faltantes (varianza entre la imputación). Bajo las condiciones apropiadas, las estimaciones agrupadas son insesgadas y tienen las propiedades estadísticas correctas.
+
+
+
+**Nota:** La imputación múltiple (Rubin 1987b; Rubin 1996) resuelve el problema de errores estándar "demasiado pequeños". 
+
+
+```{r}
+imputed_data3 <- mice(base[,names(base) %in% columns], seed=2018,print = F,
+                      m = 30)
+complete.data3<- mice::complete(imputed_data3)
+
+xyplot(imputed_data3,rad ~ptratio)
+```
+
+
+
+```{r}
+
+
+par(mfrow=c(1,2))
+plot(density(base$ptratio,na.rm = T),col=2,main="ptratio")
+lines(density(complete.data3$ptratio),col=3)
+plot(density(base$rad,na.rm = T),col=2,main="rad")
+lines(density(complete.data3$rad),col=3)
+```
+
+#Aleatorio
+
+```{r}
+rand.imput <-function(x){
+missing <- (is.na(x)) #vector booleano
+n.missing <- sum(missing)#Numero de NA’s
+x.obs <- x[!missing]#Datos no NA
+imputed <- x
+imputed[missing] <- sample(x.obs,n.missing,replace = T)
+#Se extrae una muestra aleatoria conocida y se remplazan estos en los NA
+return(imputed)}
+
+complete.data4 <- rand.imput(base$ptratio)
+complete.data5 <- rand.imput(base$rad)
+
+```
+
+
+```{r}
+
+par(mfrow=c(1,2))
+plot(density(base$ptratio,na.rm = T),col=2,main="ptratio")
+lines(density(complete.data4),col=3)
+plot(density(base$rad,na.rm = T),col=2,main="rad")
+lines(density(complete.data5),col=3)
+```
+
+# Referencias
+
+* https://stefvanbuuren.name/fimd/
