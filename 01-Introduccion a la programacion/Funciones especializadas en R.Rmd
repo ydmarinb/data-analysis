@@ -1,12 +1,12 @@
 ---
 title: "Funciones especializadas en R"
 author: "Yubar Daniel Marín Benjumea"
-date: "https://github.com/ydmarinb"
+date: "https://unalyticsteam.github.io/unalytics.github.io/"
 output:
   html_document:
     highlight: tango
 
-    theme: cosmo
+    theme: flatly
     toc: yes
     toc_float: yes
   pdf_document:
@@ -33,7 +33,7 @@ base <- read.csv("../Bases de datos/auto-mpg.csv", stringsAsFactors = F)
 
 ### Combinamos vectores
 
-Se combinan dos vectores por medio de `paste` como se hubiera hecho un ciclo.
+Se combinan dos vectores por medio de `paste` como si se hubiera hecho un ciclo.
 
 ```{r}
 first <- c("inicio 1 ", "inicio 2 ", "inicio 3 ", "inicio 4 ")
@@ -60,15 +60,29 @@ base$displacement <- base$displacement *4
 head(base[,1:5])
 ```
 
+# La familia apply
 
-# apply
+La idea de las funciones que pertenecen a esta familia es la manipulación de vectores, matrices, listas y data frame. Permiten  evitar el uso directo de ciclos por medio de funciones que operan directamente sobre cada elemento de la estructura de datos. 
+
+## apply()
+
+Esta función es aplicable sobre matrices, su estructura es `apply(x, MARGIN, FUN, ...)`y sus parámetros son los siguientes:
+
+* `x` <- Es la matriz
+* `MARGIN` <- Podemos realizar operaciones sobre filas o columnas donde 1 indica filas y 2 indica columnas.
+* `FUN` <- Es la función que se quiere aplicar sobre los datos, esta puede ser una función de agregación una de transformación o subconjunto o funciones vectorizadas.
+
+
+![Imagen tomada de DATACAMP](apply.png)
+
+### Ejemplos
 
 ```{r}
 m <- matrix(seq(1,16), 4, 4)
 m
 ```
 
-Podemos realizar operaciones sobre filas o columnas donde 1 indica filas y 2 indica columnas.
+
 
 ```{r}
 #Maximo por columna
@@ -88,14 +102,23 @@ apply(m, c(1,2), function(x){x^2})
 Si queremos aplicar funciones que dependen de ciertos parámetros lo hacemos de la siguiente manera.
 
 ```{r}
-# Apicanco la funcion quantile
+# Aplicando la función quantile
 
 apply(m, 1, quantile,probs = c(0.4,0.6,0.8))
 ```
 
-# lapply
 
-Permite trabajar con vectores listas o data frame, permite aplicar operaciones por elementos y devuelve un lista.
+
+
+## lapply()
+
+Esta función permite trabajar con vectores, listas o data frame. Se pueden aplicar operaciones por elementos las cuales con retornadas como una lista. Su estructura está dada por `lapply(x, simplify=FALSE, FUN,...)`.
+
+* `simplify=FALSE` <- Le indica a R que no retorne los valores como una lista.
+
+![Imagen tomada de DATACAMP](lapply.png)
+
+### Ejemplos
 
 ```{r}
 x <- 1:3
@@ -110,15 +133,16 @@ x
 lapply(x, mean)
 ```
 
-# Sapply
+## Sapply()
 
-Permite trabajar con vectores listas o data frame, permite aplicar operaciones por elementos y devuelve un vector.
+Esta función tiene un uso similar a la función `lapply()` ya que puede ser usada para data frame, vectores y listas pero se diferencia ya que esta imprime por consola un vector de valores y no una lista. La estructura está dada por `sapply(x, FUN, ...)`
+
+### Ejemplos
 
 ```{r}
 sapply(x, mean)
 ```
 
-`sapply` permite devolver matrices cuando la función aplicada no devuelve un valor único.
 
 ```{r}
 sapply(base[,2:8], summary)
@@ -128,9 +152,13 @@ sapply(base[,2:8], summary)
 apply(base[,2:8], 2,sum)
 ```
 
-# tapply
+## tapply()
 
-Permite aplicar funciones a subconjuntos de datos de un data frame, vector,...
+Esta función permite aplicar funciones a subconjuntos de datos de un data data frame o vectores. Su estructura esta dado por `tapply(X, INDEX, FUN , ..., simplify = TRUE)`.
+
+* `INDEX` <- Es una lista de las categorías. 
+
+### Ejemplos
 
 ```{r}
 base$cylinders <- factor(base$cylinders,
@@ -146,15 +174,21 @@ tapply(base$mpg, base$cylinders, mean)
 tapply(base$mpg, list(cyl = base$cylinders), mean)
 ```
 
-# by
+## by()
 
-Permite aplicar funciones definidas por el usuario a cualquier subconjunto de la base de datos.
+Esta función permite aplicar funciones definidas por el usuario a cualquier subconjunto de la base de datos. Su estructura es `by(data, INDICES, FUN, ..., simplify = TRUE)`.
 
-
+### Ejemplo
 
 ```{r}
 by(base, base$cylinders, function(row){cor(row$mpg, row$acceleration)})
 ```
+
+
+# Otros ejemplos
+
+https://github.com/unalyticsteam/Tareas/blob/master/Notebooks%20de%20R/Encuentro%20003.ipynb
+
 
 # Referencias
 

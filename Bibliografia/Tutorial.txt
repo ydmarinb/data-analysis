@@ -1,0 +1,13 @@
+## Tutorial introducción a la analítica de datos con R
+
+* `Unidad 1 : Introducción a la programación con R.`
+    * [Estructura de datos](http://rpubs.com/ydmarinb/429752)
+    * [Estructuras de control, ciclos y funciones](http://rpubs.com/ydmarinb/429754)
+    * [Funciones especializadas en R](http://rpubs.com/ydmarinb/429755)
+* `Unidad 2 :Limpieza y preparación de datos`
+    * [Expresiones regulares](http://rpubs.com/ydmarinb/429756)
+    * [Imputación de datos](http://rpubs.com/ydmarinb/429757)
+    * [Tratamiento de outliers](http://rpubs.com/ydmarinb/429759)
+    * [Reescalar, normalizar y variables indicadoras](http://rpubs.com/ydmarinb/429761)
+
+* `proximamente mas contenido`

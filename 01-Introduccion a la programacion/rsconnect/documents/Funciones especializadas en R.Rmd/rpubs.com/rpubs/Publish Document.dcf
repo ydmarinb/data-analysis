@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/467667/5332e3be06be465f9d5a5dfea0efe0ef
+bundleId: https://api.rpubs.com/api/v1/document/467667/5332e3be06be465f9d5a5dfea0efe0ef
+url: http://rpubs.com/ydmarinb/467667
+when: 1550239026.11371

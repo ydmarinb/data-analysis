@@ -1,0 +1,75 @@
+---
+title: "Análisis de componentes principales."
+author: "Yubar Daniel Marín Benjumea"
+date: "https://unalyticsteam.github.io/unalytics.github.io/"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache  = TRUE)
+```
+
+```{r message=FALSE, warning=F}
+library(corrplot)
+library(kableExtra)
+library(factoextra)
+library(FactoMineR)
+```
+
+
+## Teoria
+
+El análisis de componentes principales nacio dado a el problema que se presentan en la mayoría de los estudios o investigaciones, por lo general cuando no se tiene claro  el objetivo de investigación, recoger la mayor cantidad de información(variables ) sobre los individuos de estudios puede llegar  a ser lo más indicado  pero esto tiene su lado negativo ya que un gran número de variables puede llegar complicar los procesos o pueden existir múltiples variables que aportan la misma información si se mira desde distintos puntos de vista.
+
+El enfoque de este método consiste en encontrar $p<n$ (donde $n$ es el número de variables) variables que son combinación lineal de las variables iniciales y que se encuentran incorrelacionadas entre ellas. Lo anterior se logra maximizando los parámetros de forma de que las nuevas variables tenga la máxima varianza posible, esto se quiere ya que se considera que entre mayor sea la varianza existe mayor información.
+
+
+
+
+## Implemetación en R
+
+```{r}
+base <- read.csv("../Bases de datos/BostonHousing.csv")
+kable(head(base),"markdown")
+
+```
+
+```{r}
+corr <- cor(base[,-14])
+corrplot::corrplot(corr)
+
+```
+
+
+```{r}
+pca <- prcomp(base, center = T, scale. = T)
+summary(pca)
+```
+
+```{r}
+fviz_pca_biplot(pca,col.var = "#2E9FDF", col.ind = "#696969")
+```
+```{r}
+modelo <- PCA(base, scale.unit = T, ncp = 7, graph = F)
+summary(modelo)
+```
+
+```{r}
+fviz_pca_ind(modelo, pointsize = 5, pointshape = 21, fill = "#E7B800", repel = F)
+```
+
+```{r}
+fviz_pca_var(modelo, col.var = "steelblue")
+```
+
+```{r}
+plot(modelo, axes = c(1,2), choix = "ind", col.ind = "red", new.plot = T, select = "cos2 0.1")
+```
+

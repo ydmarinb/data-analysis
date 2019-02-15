@@ -1,11 +1,11 @@
 ---
 title: "Ficheros en R"
 author: "Yubar Daniel Marín Benjumea"
-date: "https://github.com/ydmarinb"
+date: "https://unalyticsteam.github.io/unalytics.github.io/"
 output:
   html_document:
     highlight: tango
-    theme: cosmo
+    theme: flatly
     toc: yes
     toc_float: yes
 ---

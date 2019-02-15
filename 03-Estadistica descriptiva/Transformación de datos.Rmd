@@ -1,7 +1,7 @@
 ---
 title: "Transformación de datos."
 author: "Yubar Daniel Marín Benjumea"
-date: "https://github.com/ydmarinb"
+date: "https://unalyticsteam.github.io/unalytics.github.io/"
 output: 
   html_document:
     theme : cosmo

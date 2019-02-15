@@ -1,11 +1,11 @@
 ---
 title: "Estructuras de control, ciclos y funciones."
 author: "Yubar Daniel Marín Benjumea"
-date: "https://github.com/ydmarinb"
+date: "https://unalyticsteam.github.io/unalytics.github.io/"
 output:
   html_document:
     highlight: tango
-    theme: cosmo
+    theme: flatly
     toc: yes
     toc_float: yes
   pdf_document:
@@ -18,6 +18,26 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(cache  = TRUE)
 
 ```
+
+# Operadores lógicos
+
+`x | y` <- Operador O
+
+`x & y` <- Perador Y
+
+`!x` <- Negación
+
+`isTRUE(x)` <- X es verdad?
+
+`==` <- Comparación
+
+`<, < =, >, > =` <- Mayor, Mayor o igual, Menor y Menor o igual.
+
+`%in%` <- Permite determinar si uno o varios valores están contenidos en un vector.
+
+
+
+
 
 # Estructuras de control
 
@@ -46,6 +66,14 @@ La siguiente instrucción es usada cuando se quieren aplicar estructuras de cont
 ifelse(Condición, Operación si cumple, Operación No cumple)
 ```
 
+
+```{r}
+compra <- c(rep("s",4), rep("n",5))
+
+ifelse(compra == "s", 0, 1)
+
+```
+
 # Ciclos
 
 R nos proporciona la posibilidad de crear los siguientes tipos de ciclos. `for, while, repeat`
@@ -62,6 +90,19 @@ for (i in secuencia) {
 }
 ```
 
+
+```{r}
+vec <- vector()
+
+for (i in 1:4) {
+  vec[i] <- i
+  return(vec)
+}
+```
+
+
+***
+
 ```{r eval=FALSE}
 while (condición) {
   operación_1
@@ -69,6 +110,23 @@ while (condición) {
   operación_3
 }
 ```
+
+```{r eval=FALSE}
+contrasena <- readline("Ingrese la contraseña")
+con = 0
+
+while (contrasena != "hola") {
+  print("Contraseña incorrecta")
+  contrasena <- readline("Ingrese la contraseña")
+  con = con + 1
+  if (con ==3) {
+    break
+  }
+  
+}
+```
+
+***
 
 ```{r eval=FALSE}
 repeat {
@@ -79,6 +137,18 @@ repeat {
   
 }
 ```
+
+```{r}
+x <- 0
+repeat {
+print(x)
+x = x+1
+if (x == 3){
+break
+}
+}
+```
+
 
 # Funciones
 
@@ -93,6 +163,88 @@ nombre_función <- function(parametro1, parametro2, .....){
   return(resultado)
   
 }
+```
+
+
+```{r}
+
+x <- 1:20
+
+conteo <- function(vector){
+  
+  con <- length(vector)
+  cat('El vector tiene', con, ' elementos')
+  
+}
+
+conteo(x)
+
+```
+
+
+# Funciones interesantes
+
+## Función which
+
+La función `which()` detecta las posiciones donde el vector lógico cumple la condición dada:
+
+```{r}
+v <- c(1,4,3,57,3,46)
+v
+```
+
+```{r}
+which( v == 3)
+```
+
+```{r}
+which.max(v)
+```
+```{r}
+which.min(v)
+```
+
+## Función case_when
+
+La función `case_when()` pertenece al paquete `gdata` y permite asignar valores dado condiciones.
+
+```{r message=FALSE}
+library(dplyr)
+
+x <- 1:50
+
+case_when(
+  x %% 35 == 0 ~ "fizz buzz",
+  x %% 5 == 0 ~ "fizz",
+  x %% 7 == 0 ~ "buzz",
+  TRUE ~ as.character(x)
+)
+
+```
+
+# Ingresar y mostrar por consola
+
+Se usa la función `readline()` para ingresar valores por consola.
+
+```{r}
+x <- readline("nombre?")
+x
+```
+
+Se usan las funciones `cat()` y `print()` para imprimir valores por consola. La diferencia entres estas dos funciones es el tipo de objeto de devuelven.
+
+```{r}
+
+class(print(paste("edad:",20)))
+ 
+```
+
+```{r}
+
+
+
+class(cat(paste("edad: ",20)))
+
 ```
 
 # Referencias

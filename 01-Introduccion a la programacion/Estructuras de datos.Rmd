@@ -1,11 +1,11 @@
 ---
 title: "Estructura de datos en R"
 author: "Yubar Daniel Marín Benjumea"
-date: "https://github.com/ydmarinb"
+date: "https://unalyticsteam.github.io/unalytics.github.io/"
 output:
   html_document:
     highlight: tango
-    theme: cosmo
+    theme: flatly
     toc : true
     toc_float: true
     
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(cache  = TRUE)
 
 # Vectores
 
-Los vectores son arreglos ordenados en los cuales se puede almacenar información numérico(Cuantitativa), alfanumérico(Cualitativa), booleano(True, false), o combinaciones de los anteriores. En R pueden ser creados de por medio de la instrucción `c()`que significa concatenar o por medio de las funciones `rep(), seq() y : `que permiten la creación de patrones.
+Los vectores son arreglos ordenados en los cuales se puede almacenar información numérica (Cuantitativa), alfanumérico (Cualitativa), booleano (True, false), o combinaciones de los anteriores. En R pueden ser creados por medio de la instrucción `c()`que significa concatenar o por medio de las funciones `rep(), seq() y : `que permiten la creación de patrones.
 
 Presentamos a continuación ejemplos de creación de vectores.
 
@@ -47,6 +47,46 @@ vector_5
 vector_6 <- rep(2,6)
 vector_6
 ```
+
+
+La función generadora de niveles, `gl(k,n)` donde k es el número de niveles o clases y n el número de repeticiones para cada nivel.
+
+```{r}
+v1 <- gl(2,4, labels = c("Hombre", "Mujer"))
+v1
+```
+
+Para la contrucción un vector vacio
+
+```{r}
+
+v <- vector()
+
+```
+
+Preguntarle a R si el objeto es un vector
+
+```{r}
+
+is.vector(v)
+
+```
+
+Transformar un objeto en un vector
+
+```{r}
+
+as.vector(v)
+```
+
+Para obtener el número de elementos del vector
+
+```{r}
+
+length(v1)
+
+```
+
 
 ## Estracción de elementos de un vector
 
@@ -97,6 +137,41 @@ arreglo <- array(c(rep(1,5),rep(3,5),2,6), c(2,3,2))
 arreglo
 ```
 
+Conocer el número de elementos en la matriz
+
+```{r}
+m <- matrix(data=5, nr=2, nc=2)
+
+length(m)
+
+```
+
+Conocer la dimensión de la matriz
+
+
+```{r}
+
+dim(m)
+
+```
+
+Contruir una matriz vacia
+
+```{r}
+m1 <- matrix()
+m1
+```
+
+Asignar nombres a las columnas y a las filas.
+
+```{r}
+rownames(m) = c("x1","x2")
+colnames(m) = c("x1","x2")
+m
+```
+
+Reasignando los valores para los elementos de una matriz
+
 ## Extraer elementos de una matriz y un array
 
 Podemos acceder a los elementos de una matriz o un array por medio de índices y el signo `[]`.
@@ -105,6 +180,48 @@ Podemos acceder a los elementos de una matriz o un array por medio de índices y
 matriz[2,1]
 
 arreglo[2,1,1]
+```
+
+Reasignando los valores para los elementos de una matriz
+
+```{r}
+m[1,1] = 1
+m[2,2] = 4
+m
+```
+
+Recorrer los elementos de la matriz.
+
+```{r}
+m[3]
+```
+
+Eliminar elemntos de una matriz
+
+```{r}
+m[2] <- NA
+m
+```
+
+Determinante e inversa de una  matriz
+
+```{r}
+
+m[2] <- 7
+
+```
+
+
+Calculo del deterinante de una matriz
+
+```{r}
+det(m)
+```
+
+Calculo de la inverda de una matriz.
+
+```{r}
+solve(m)
 ```
 
 # Data frame
@@ -133,6 +250,23 @@ marco.datos[2,2]# Se extrae elemento de la fila 2 columna 2
 ```
 
 
+
+```{r}
+x <- 1:20
+y <- rep(c("a", "b", "c", "d"),5)
+
+df <- data.frame(x,y)
+
+df$y
+
+
+```
+
+
+```{r}
+df[,"y"]
+```
+
 # Listas
 
 Las listas son estructuras muy usadas para almacenar objetos donde cada uno cada uno puede tener un estructura distinta. En R las listas se pueden crear por medio de la función  `list()`
@@ -151,6 +285,19 @@ arreglo <- array(c(rep(1,5),rep(3,5),2,6), c(2,3,2))
 
 lista <- list(marco.datos, matriz, arreglo)
 
+```
+
+
+## Extraer elemento de una lista
+
+
+```{r}
+lista[2]
+```
+
+
+```{r}
+marco.datos[[1]]
 ```
 
 # Referencias
