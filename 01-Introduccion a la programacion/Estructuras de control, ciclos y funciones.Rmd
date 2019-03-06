@@ -23,7 +23,7 @@ knitr::opts_chunk$set(cache  = TRUE)
 
 `x | y` <- Operador O
 
-`x & y` <- Perador Y
+`x & y` <- OPerador Y
 
 `!x` <- Negación
 

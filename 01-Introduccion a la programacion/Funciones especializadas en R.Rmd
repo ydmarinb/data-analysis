@@ -85,10 +85,10 @@ m
 
 
 ```{r}
-#Maximo por columna
+#Máximo por columna
 apply(m, 2, max)
 
-# Minimo por filas
+# Mínimo por filas
 apply(m, 1, min)
 ```
 
@@ -168,7 +168,7 @@ base$cylinders <- factor(base$cylinders,
 
 
 ```{r}
-#Funcion con respecto a cada nivel del número de cylindros
+#Función con respecto a cada nivel del número de cilindros
 
 tapply(base$mpg, base$cylinders, mean)
 tapply(base$mpg, list(cyl = base$cylinders), mean)

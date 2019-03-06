@@ -56,7 +56,7 @@ v1 <- gl(2,4, labels = c("Hombre", "Mujer"))
 v1
 ```
 
-Para la contrucción un vector vacio
+Para la construcción un vector vacío
 
 ```{r}
 
@@ -88,7 +88,7 @@ length(v1)
 ```
 
 
-## Estracción de elementos de un vector
+## Extracción de elementos de un vector
 
  Podemos acceder a los elementos de un vector por medio de índices y el signo `[]`.
  
@@ -155,7 +155,7 @@ dim(m)
 
 ```
 
-Contruir una matriz vacia
+Construir una matriz vacía
 
 ```{r}
 m1 <- matrix()
@@ -196,7 +196,7 @@ Recorrer los elementos de la matriz.
 m[3]
 ```
 
-Eliminar elemntos de una matriz
+Eliminar elementos de una matriz
 
 ```{r}
 m[2] <- NA
@@ -212,13 +212,13 @@ m[2] <- 7
 ```
 
 
-Calculo del deterinante de una matriz
+Calculo del determinante de una matriz
 
 ```{r}
 det(m)
 ```
 
-Calculo de la inverda de una matriz.
+Calculo de la inversa de una matriz.
 
 ```{r}
 solve(m)
@@ -271,7 +271,7 @@ df[,"y"]
 
 Las listas son estructuras muy usadas para almacenar objetos donde cada uno cada uno puede tener un estructura distinta. En R las listas se pueden crear por medio de la función  `list()`
 
-A continuación se presentan ejemplos sobre listas en R.
+A continuación, se presentan ejemplos sobre listas en R.
 
 ```{r}
 vec_1 <- 1:5

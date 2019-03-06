@@ -368,7 +368,7 @@ vector_<span class="dv">6</span></code></pre></div>
 v1</code></pre></div>
 <pre><code>## [1] Hombre Hombre Hombre Hombre Mujer  Mujer  Mujer  Mujer 
 ## Levels: Hombre Mujer</code></pre>
-<p>Para la contrucción un vector vacio</p>
+<p>Para la construcción un vector vacío</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">v &lt;-<span class="st"> </span><span class="kw">vector</span>()</code></pre></div>
 <p>Preguntarle a R si el objeto es un vector</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is.vector</span>(v)</code></pre></div>
@@ -379,8 +379,8 @@ v1</code></pre></div>
 <p>Para obtener el número de elementos del vector</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(v1)</code></pre></div>
 <pre><code>## [1] 8</code></pre>
-<div id="estraccion-de-elementos-de-un-vector" class="section level2">
-<h2>Estracción de elementos de un vector</h2>
+<div id="extraccion-de-elementos-de-un-vector" class="section level2">
+<h2>Extracción de elementos de un vector</h2>
 <p>Podemos acceder a los elementos de un vector por medio de índices y el signo <code>[]</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vector_<span class="dv">1</span>[<span class="dv">2</span>]</code></pre></div>
 <pre><code>## [1] &quot;b&quot;</code></pre>
@@ -436,7 +436,7 @@ arreglo</code></pre></div>
 <p>Conocer la dimensión de la matriz</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(m)</code></pre></div>
 <pre><code>## [1] 2 2</code></pre>
-<p>Contruir una matriz vacia</p>
+<p>Construir una matriz vacía</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">m1 &lt;-<span class="st"> </span><span class="kw">matrix</span>()
 m1</code></pre></div>
 <pre><code>##      [,1]
@@ -466,7 +466,7 @@ m</code></pre></div>
 <p>Recorrer los elementos de la matriz.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">m[<span class="dv">3</span>]</code></pre></div>
 <pre><code>## [1] 5</code></pre>
-<p>Eliminar elemntos de una matriz</p>
+<p>Eliminar elementos de una matriz</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">m[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
 m</code></pre></div>
 <pre><code>##    x1 x2
@@ -474,10 +474,10 @@ m</code></pre></div>
 ## x2 NA  4</code></pre>
 <p>Determinante e inversa de una matriz</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">m[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">7</span></code></pre></div>
-<p>Calculo del deterinante de una matriz</p>
+<p>Calculo del determinante de una matriz</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">det</span>(m)</code></pre></div>
 <pre><code>## [1] -31</code></pre>
-<p>Calculo de la inverda de una matriz.</p>
+<p>Calculo de la inversa de una matriz.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">solve</span>(m)</code></pre></div>
 <pre><code>##            x1          x2
 ## x1 -0.1290323  0.16129032
@@ -523,7 +523,7 @@ df<span class="op">$</span>y</code></pre></div>
 <div id="listas" class="section level1">
 <h1>Listas</h1>
 <p>Las listas son estructuras muy usadas para almacenar objetos donde cada uno cada uno puede tener un estructura distinta. En R las listas se pueden crear por medio de la función <code>list()</code></p>
-<p>A continuación se presentan ejemplos sobre listas en R.</p>
+<p>A continuación, se presentan ejemplos sobre listas en R.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vec_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span>
 vec_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;e&quot;</span>, <span class="st">&quot;i&quot;</span>, <span class="st">&quot;o&quot;</span>, <span class="st">&quot;u&quot;</span>)
 marco.datos &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Numeros =</span> vec_<span class="dv">1</span>, <span class="dt">Letras =</span> vec_<span class="dv">2</span>)

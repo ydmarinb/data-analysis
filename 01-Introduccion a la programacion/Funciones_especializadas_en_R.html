@@ -400,10 +400,10 @@ m</code></pre></div>
 ## [2,]    2    6   10   14
 ## [3,]    3    7   11   15
 ## [4,]    4    8   12   16</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Maximo por columna</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Máximo por columna</span>
 <span class="kw">apply</span>(m, <span class="dv">2</span>, max)</code></pre></div>
 <pre><code>## [1]  4  8 12 16</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Minimo por filas</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Mínimo por filas</span>
 <span class="kw">apply</span>(m, <span class="dv">1</span>, min)</code></pre></div>
 <pre><code>## [1] 1 2 3 4</code></pre>
 <p>También podemos definir funciones dentro de la función <code>apply</code> y aplicar estas funciones tanto por filas como por columnas (<code>c(1,2)</code>)</p>
@@ -508,7 +508,7 @@ x</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">base<span class="op">$</span>cylinders &lt;-<span class="st"> </span><span class="kw">factor</span>(base<span class="op">$</span>cylinders,
                          <span class="dt">levels =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">8</span>),
                          <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;3C&quot;</span>, <span class="st">&quot;4C&quot;</span>, <span class="st">&quot;5C&quot;</span>, <span class="st">&quot;6C&quot;</span>, <span class="st">&quot;8C&quot;</span>))</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Funcion con respecto a cada nivel del número de cylindros</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Función con respecto a cada nivel del número de cilindros</span>
 
 <span class="kw">tapply</span>(base<span class="op">$</span>mpg, base<span class="op">$</span>cylinders, mean)</code></pre></div>
 <pre><code>##       3C       4C       5C       6C       8C 
