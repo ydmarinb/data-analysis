@@ -23,7 +23,7 @@ knitr::opts_chunk$set(cache  = TRUE)
 # Que son las expresiones regulares
 Expresión regular, también conocida como regex, regexp o expresión racional, es una secuencia de caracteres que forma un patrón de búsqueda, principalmente utilizada para la búsqueda de patrones de cadenas de caracteres u operaciones de sustituciones.
 
-# Téoria
+# Teoría
 
 Las expresiones regulares se construyen utilizando los operadores **unión, concatenación y clausura de Kleene**.
 
@@ -46,7 +46,7 @@ Un Cuantificador que precede a un carácter cuantifica las veces que este carác
 
 ## Alternación
 
-* `$` El signo de dolar representa el final de la cadena de caracteres o el final de la línea.
+* `$` El signo de dólar representa el final de la cadena de caracteres o el final de la línea.
 
 * `^` El acento representa el inicio de la cadena.
 

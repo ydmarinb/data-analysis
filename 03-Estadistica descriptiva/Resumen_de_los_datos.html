@@ -350,8 +350,8 @@ div.tocify {
 <h1>Tipos de variables</h1>
 <p>Es una característica que varía de un objeto o individuo a otro.En estadística, se distinguen tres tipos de variables <strong>Continuas</strong>, <strong>Discretas</strong> y <strong>Categóricas</strong>.</p>
 <ul>
-<li><p><code>Variables continuas</code> Son aquellas que provienen de procesos que in- volucran mediciones.</p></li>
-<li><p><code>Variables discretas</code> Son aquellas que provienen de procesos que in- volucran conteos.</p></li>
+<li><p><code>Variables continuas</code> Son aquellas que provienen de procesos que involucran mediciones.</p></li>
+<li><p><code>Variables discretas</code> Son aquellas que provienen de procesos que involucran conteos.</p></li>
 <li><code>Variables categóricas</code> Son aquellas que provienen de procesos que involucran clasificaciones.
 <ul>
 <li><code>Nominal</code> Este nivel se utiliza cuando los valores en los que se mide la variable son códigos que representan la pertenencia a una categoría.</li>
@@ -464,7 +464,7 @@ div.tocify {
 ##  $ acceleration: num  15.5 13.5 14.5 17 15 15 13.9 14.8 18.5 14 ...
 ##  $ model_year  : int  71 72 82 72 70 75 76 81 75 76 ...
 ##  $ car_name    : chr  &quot;chevrolet vega 2300&quot; &quot;mazda rx2 coupe&quot; &quot;honda accord&quot; &quot;datsun 510 (sw)&quot; ...</code></pre>
-<p>La función <code>str()</code> nos arroja información importante sobre la dimensión de la base de datos, los tipos de variables y algunas represenaciones de esta. Se debe resaltar que aunque R trata de ser lo mas inteligente posible se deben aplicar un poco de intuisión sobre a que tipo pertenece cada variable y si lo inferido no coincide con lo aportado por R se debe modificar.</p>
+<p>La función <code>str()</code> nos arroja información importante sobre la dimensión de la base de datos, los tipos de variables y algunas represenaciones de esta. Se debe resaltar que aunque R trata de ser lo mas inteligente posible se deben aplicar un poco de intuición sobre a que tipo pertenece cada variable y si lo inferido no coincide con lo aportado por R se debe modificar.</p>
 <p>** Diccionario de representación**</p>
 <ul>
 <li><code>int</code> Variable discreta</li>
@@ -473,7 +473,7 @@ div.tocify {
 <li><code>chr</code>Variable tipo caracter</li>
 </ul>
 <hr />
-<p>Aunque la variable <code>cylinders</code> es tomada como tipo discreto nuestra intuisión nos permite inferir que en reliadad esta representa una categoría, por lo que debemos recurrir a modificarla en R.</p>
+<p>Aunque la variable <code>cylinders</code> es tomada como tipo discreto nuestra intuición nos permite inferir que en reliadad esta representa una categoría, por lo que debemos recurrir a modificarla en R.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">base<span class="op">$</span>cylinders &lt;-<span class="st"> </span><span class="kw">as.factor</span>(base<span class="op">$</span>cylinders)
 <span class="co"># Funciona igual con los demas tipos de variables as.num(),as.int,...</span>
 

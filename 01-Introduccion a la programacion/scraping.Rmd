@@ -1,0 +1,259 @@
+---
+title: "Web Scraping"
+author: "Heber Esteban Bermúdez"
+date: Unalytics "https://unalyticsteam.github.io/unalytics.github.io/"
+output:
+  html_document:
+    highlight: tango
+    theme: flatly
+    toc : true
+    toc_float: true
+    
+---
+# Introducción
+
+Muchas veces los datos que encontramos en la web no están formatos estructurados o ficheros que estamos a acostumbrados a manejar como xls, csv, csv2, txt, json, xml entre otros,  es por eso que es necesario desarrollar una metodología diferente para poder acceder a dichos datos.
+
+El web scraping es uno de los métodos más sólidos y confiables para obtener datos de internet y este nos permite extraer datos escondidos en un documento, como páginas web.
+
+
+# ¿Para qué nos sirve web scraping? 
+
+<center>
+![](redes-sociales-lupa.jpg){width=40%}
+</center>
+
+- Rastreo de datos de sitios de redes sociales como Facebook y Twitter para realizar tareas Análisis de opiniones, extracción de opiniones, etc.
+- Analizar la página web de la competencia (precios, promociones, contenido que generan)
+- Rastreo de datos de texto de Wikipedia y otras fuentes para crear sistemas basados en PNL o entrenar modelos de aprendizaje profundo.
+- Extraer los datos de imagen de sitios web como Google, Flickr, etc. para entrenar modelos de clasificación de imágenes.
+
+
+# Estructura HTML5
+
+<center> 
+![](html5.png){width=45%}
+</center>
+
+Conocer la estructura de una página web es el primer paso para extraer y usar los datos. 
+
+- HTML es el acrónimo de Hypertext Markup Language y es el lenguaje utilizado para describir (marcado) páginas web y como tal es el lenguaje subyacente para estructurar el contenido de la página web. HTML no determina la apariencia de las cosas, solo ayuda a clasificar y estructurar el contenido.
+
+- CSS (hojas de estilo en cascada) es un lenguaje que define la apariencia de un documento escrito en un lenguaje de marcado (por ejemplo, HTML).
+
+- JavaScript (JS) es un lenguaje de programación interpretado que es implementado como parte de un navegador web permitiendo mejoras en la interfaz de usuario y páginas web dinámicas
+
+
+<center>
+![](htmlstructure.png){width=70%}
+</center>
+
+- 1 Tipo de documento <!DOCTYPE html> (indica que estamos trabajando con html5)
+- 2 Inicio y fin del documento html
+- 3 Cabeza (aquí podemos hacer llamados a las hojas de estilos y JS)
+- 4 Codificación
+- 5 Título de la página web
+- 6 Cuerpo (aquí va el contenido de la página web) 
+
+## Etiquetas basicas html
+
+En el siguiente enlace encontrará un listado con las etiquetas básicas html 
+
+<https://www.brandominus.com/todas-etiquetas-html5/>
+
+
+## Asignando id y clase a una etiqueta html.
+
+```{r eval=FALSE}
+  <div id="about">    (Asignando id.)
+  <div class="container">  (Asignando clase.)
+```
+
+
+## Selectores en CSS 
+
+
+#### Selectores de ID (se indica con #)
+```{r eval=FALSE}
+ #about
+```
+
+
+####  Selectores de clase (se indica con . (punto))
+
+```{r eval=FALSE}
+ .container
+```
+
+
+# rvest
+
+rvest es un paquete que facilita la  recolección de datos de páginas web html creado por Hadley Wickham (científico jefe de RStudio). 
+
+#### Instalación 
+```{r eval=FALSE}
+install.packages("rvest")
+```
+
+Funciones principales
+
+read_html(url) : para leer el código html 
+html_nodes()  : para identificar los nodos
+html_nodes(“.class”) : llamado a los nodos basado en la clase CSS
+html_nodes(“#id”): llamado al nodo basado en el id de la etiqueta <div>
+html_table(): convierte tablas HTML en dataframe
+
+
+# SelectorGadget (Google Chrome)
+
+SelectorGadget es una herramienta de código abierto que nos indica el selector CSS de una sección especifica de una página web, con esto podemos identificar en que clase CSS esta determinado dato. 
+
+
+#### Instalación. 
+
+![Imagen1. SelectorGadget](selectorgadget.png){width=100%}
+
+Una vez añadida la extensión esta aparecerá en la parte superior derecha del navegador. 
+
+Para saber cómo funciona, consulte:
+
+<https://selectorgadget.com/>
+
+
+
+# Ejemplo 1 (Clásico)
+
+
+#### Cargado librería rvest al ambiente de trabajo
+
+
+A continuación, se muestra como extraer información del rankin de películas de la pagina IMDb
+
+
+```{r}
+library(rvest)
+```
+
+ 
+```{r}
+#Especificar la url de la página de la que queremos extraer la información
+url <- "https://www.imdb.com/search/title?count=100&release_date=2016,2016&title_type=feature"
+
+# Leyendo el código HTML de la pagina 
+peliculas <- read_html(url) 
+```
+
+### Extrayendo los titulos de las peliculas
+
+```{r}
+# Extrayendo el los nodos que contienen los títulos de las películas.
+nodos_titulos <- html_nodes(peliculas, ".lister-item-header a")
+
+# Convirtiendo a texto (siempre)
+titulos_peliculas <- html_text(nodos_titulos)
+
+# Mostremos los primeros 5 elementos de titulos_peliculas
+head(titulos_peliculas, 5)
+
+# Verificamos que si sea el tipo de dato que deseamos 
+class(titulos_peliculas)
+
+
+
+```
+
+
+```{r}
+#NOTA: podemos usar tuberias (hace exactamente lo mismo que el código de arriba)
+titulos_peliculas <- peliculas %>% html_nodes(".lister-item-header a") %>% html_text()
+```
+
+
+
+### Extrayendo la descripción de las películas.
+
+```{r}
+# Extrayendo el los nodos que contienen la descripción de las películas.
+nodos_descripcion <- html_nodes(peliculas, '.ratings-bar+ .text-muted')
+
+# Convirtiendo a texto (siempre)
+descripcion <- html_text(nodos_descripcion)
+
+# Mostremos los primeros 3 elementos.
+head(descripcion, 3)
+
+# Limpiando, removiendo '\n'
+descripcion_clean <- gsub("\n","",descripcion )
+
+#Mostremos nuevamente los primeros 3 elementos.
+head(descripcion_clean, 3)
+
+```
+
+
+### Sacando la duración de la película
+
+```{r}
+# Extrayendo los nodos que contienen la duración de las películas.
+nodos_duracion <- html_nodes(peliculas, '.runtime')
+
+# Convirtiendo a texto (siempre)
+duracion <- html_text(nodos_duracion)
+head(duracion, 3)
+
+# Limpiando, removiendo 'min'
+duracion_clean <-gsub("min","",duracion )
+
+# Mostrado los primeros 3 elementos
+head(duracion_clean, 3)
+
+# convirtiendo a tipo de variable deseada 
+duracion_clean <- as.numeric(duracion_clean)
+
+```
+
+
+### Extrayendo Calificación de las películas  
+
+```{r}
+# Extrayendo los nodos de calificación de las películas  
+nodos_calificacion <- html_nodes(peliculas, '.ratings-imdb-rating strong')
+
+# Convirtiendo a texto (siempre)
+calificacion <- html_text(nodos_calificacion)
+
+# convirtiendo a variable deseada. 
+calificacion <- as.numeric(calificacion)
+
+```
+
+### Creando nuestro data.frame
+
+```{r}
+datos <- data.frame(titulos_peliculas, descripcion_clean, duracion_clean, calificacion)
+
+```
+
+### Grafico 
+
+```{r}
+library(ggplot2)
+ggplot (datos, aes(x = calificacion, y = duracion_clean)) + geom_point()
+
+```
+
+# Ejemplo 2.
+
+(en construcción)
+
+
+# Legalidad
+Algunos sitios web se oponen a ser rastreados, ya sea por el aumento de las cargas del servidor o por preocupaciones sobre la propiedad de los datos. Si un sitio web prohíbe raspar los Términos de uso, es ilegal.
+
+
+# Interesante
+
+Extraer datos de twitter :
+<https://rpubs.com/camilamila/tweets2>
+
+

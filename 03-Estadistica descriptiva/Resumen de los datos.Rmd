@@ -34,11 +34,9 @@ knitr::opts_chunk$set(cache  = TRUE)
 
 Es una característica que varía de un objeto o individuo a otro.En estadística, se distinguen tres tipos de variables **Continuas**, **Discretas** y **Categóricas**.
 
-* `Variables continuas` Son aquellas que provienen de procesos que in-
-volucran mediciones.
+* `Variables continuas` Son aquellas que provienen de procesos que involucran mediciones.
 
-* `Variables discretas` Son aquellas que provienen de procesos que in-
-volucran conteos.
+* `Variables discretas` Son aquellas que provienen de procesos que involucran conteos.
 
 * `Variables categóricas` Son aquellas que provienen de procesos que
 involucran clasificaciones.
@@ -72,7 +70,7 @@ base$No <- NULL
 # Conocer el tipo en que R ha tomado las variables
 str(base)
 ```
-La función `str()` nos arroja información importante sobre la dimensión de la base de datos, los tipos de variables y algunas represenaciones de esta. Se debe resaltar que aunque R trata de ser lo mas inteligente posible se deben aplicar un poco de intuisión sobre a que tipo pertenece cada variable y si lo inferido no coincide con lo aportado por R se debe modificar.
+La función `str()` nos arroja información importante sobre la dimensión de la base de datos, los tipos de variables y algunas represenaciones de esta. Se debe resaltar que aunque R trata de ser lo mas inteligente posible se deben aplicar un poco de intuición sobre a que tipo pertenece cada variable y si lo inferido no coincide con lo aportado por R se debe modificar.
 
 ** Diccionario de representación**
 
@@ -86,7 +84,7 @@ La función `str()` nos arroja información importante sobre la dimensión de la
 
 ***
 
-Aunque la variable `cylinders` es tomada como tipo discreto nuestra intuisión nos permite inferir que en reliadad esta representa una categoría, por lo que debemos recurrir a modificarla en R.
+Aunque la variable `cylinders` es tomada como tipo discreto nuestra intuición nos permite inferir que en reliadad esta representa una categoría, por lo que debemos recurrir a modificarla en R.
 
 ```{r}
 base$cylinders <- as.factor(base$cylinders)
