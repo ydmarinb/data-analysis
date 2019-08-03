@@ -20,9 +20,17 @@ knitr::opts_chunk$set(cache  = TRUE)
 
 La regresión lineal como su nombre lo indica permite crear relaciones lineales entre una variable dependiente y un grupo de variables independientes.
 
+![Tomado de http://www.ccg.unam.mx/~vinuesa/R4biosciences/docs/Tema9_regresion.html](regresion.png)
+
 El reto consiste en minimizar
 
 $$e=\sum_{i=1}^n(y_i-\hat{y}_i)^2$$
+
+```{r}
+eq = function(x){x^2}
+plot(eq(-1000:1000), type='l')
+```
+
 
 
 Donde $y_i$ es el valor de la observación para la $i-esima$  unidad, $\hat{y}_i$ es el valor estimado para la $i-esima$ observación.
@@ -34,7 +42,8 @@ El modelo de regresión funciona sobre los siguientes supuestos
 
 $$y_i = \beta_0+ \beta_1X_i+ e_i$$ 
 
-donde $e_i\sim N(0, \sigma^2)$, $y\sim N(\mu,\sigma^2)$
+
+donde $e_i\sim^{iid} N(0, \sigma^2)$, $y\sim N(\mu,\sigma^2)$
 
 
 # Implementación en R
