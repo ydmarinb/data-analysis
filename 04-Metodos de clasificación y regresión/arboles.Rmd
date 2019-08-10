@@ -16,6 +16,14 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(cache  = TRUE)
 ```
 
+## Ejemplo de árbol de clasificación (Titanic)
+
+![](Images/titanic.png){width=50%}
+
+
+
+
+
 # Árboles de regresión
 
 
@@ -211,6 +219,36 @@ text(arbol.corte, cex = 0.7)
 
 * Los árboles pueden ser muy poco robustos. En otras palabras, una pequeño cambio en los datos puede causar un gran cambio en la estimación final.
 árbol.
+
+
+
+# Aplicaciones. 
+
+## Detección de fraudes
+
+![](Images/fraud.jpg){width=60%}
+
+Una aplicación comercial ampliamente utilizada es la detección de estados financieros fraudulentos (FFS).
+
+Kirkos y col. (2007) han creado un modelo de árbol de decisión para identificar y detectar FFS. En su estudio, se seleccionaron 76 empresas manufactureras griegas y se recopilaron sus estados financieros publicados, incluidos los balances y los estados de resultados, con fines de modelación. El modelo de árbol creado muestra que todos los casos sin fraude y el 92% de los casos de fraude se han clasificado correctamente. Tal hallazgo indica que los árboles de decisión pueden hacer una contribución significativa para la detección de FFS debido a una tasa altamente precisa.
+
+
+## Consumo de energía
+
+![](Images/energia.jpg){width=70%}
+
+La investigación del consumo de energía se convierte en un tema importante ya que ayuda a las empresas de servicios públicos a identificar la cantidad de energía necesaria.
+
+Los árboles de decisión son los preferidos. Esto se debe al hecho de que una estructura jerárquica proporcionada por los árboles de decisión es útil para presentar el nivel profundo de información y conocimiento. Tso y Yau (2007) crean un modelo de árbol de decisión para identificar las relaciones entre un hogar y sus consumos de electricidad. Los resultados de su modelo de árbol ilustran que la cantidad de miembros del hogar es el factor más determinante del consumo de energía en verano, y tanto la cantidad de aire acondicionado como el tamaño de un piso son los segundos factores más importantes.
+
+
+## Otros casos
+
+
+Existen muchos otros casos de exito en la aplicacion de arboles de desicion como lo son:
+
+Predecir fechas de alta ocupación para hoteles, Calificación crediticia, riesgo de delito, diagnóstico médico, predicción de fallas. 
+
 
 
 # Referencias

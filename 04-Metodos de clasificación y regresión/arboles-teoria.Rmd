@@ -1,0 +1,40 @@
+---
+title: "Árboles de decisión"
+author: "Heber Esteban Bermúdez"
+date: "https://unalyticsteam.github.io/unalytics.github.io/"
+output: 
+  html_document:
+    theme : cosmo
+    toc : true
+    highlight: tango
+    toc_float: true
+
+---
+
+## Fundamentos de los árboles de decisión
+
+![](Images/imagen1.png){width=30%}
+
+
+Los arboles de desicion son un metodo de clasificación supervisada, sus vriables deperdiente pueden ser cualitativas o cuantitativa. 
+
+* Variable dependiente $y$ es de tipo cualitativo = Arbol de clasificación.
+* Variable dependitne $y$ es de tipo antitativo = Arbol de regresión.
+
+Consiste estratificar o segmentar el espacio predictivo en una serie de regiones simples Para hacer una predicción para un determinado observación, normalmente usamos la media o el modo de las observaciones de entrenamiento en la región a la que pertenece
+
+Son utiles para la interpretación
+
+
+Llevan inplicitamente una seleccion de caracteristicas o seleccion de variable 
+
+
+
+
+
+
+
+
+
+
+
